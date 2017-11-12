@@ -1,2 +1,5 @@
 gensim
+keras
+tensorflow
 matplotlib
+

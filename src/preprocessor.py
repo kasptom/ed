@@ -1,9 +1,14 @@
-from gensim import corpora
+import itertools
+
+import numpy as np
+from gensim import models
+
+from gensim import corpora, matutils
 
 from src.my_corpus import MyCorpus, STOP_LIST
 
 FILE_SEPARATOR = "/"
-
+TEST_DATA_PERCENTAGE = 30.0
 
 class Preprocessor:
     def __init__(self):
@@ -34,17 +39,53 @@ class Preprocessor:
         dictionary.save(dictionary_path)  # store the dictionary, for future reference
         print("File saved in: " + dictionary_path)
 
+        # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.neg")
+        # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.pos")
+    @staticmethod
+    def fetch_data():
+        dictionary_neg = corpora.Dictionary.load("../tmp/rt-polarity.neg.dict")
+        dictionary_pos = corpora.Dictionary.load("../tmp/rt-polarity.pos.dict")
 
-# Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.neg")
-# Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.pos")
+        print(dictionary_neg)
+        print(dictionary_pos)
 
-dictionary_neg = corpora.Dictionary.load("../tmp/rt-polarity.neg.dict")
-dictionary_pos = corpora.Dictionary.load("../tmp/rt-polarity.pos.dict")
+        corpus_pos = MyCorpus("../data/rt-polaritydata/rt-polarity.pos", dictionary_pos)
+        corpus_neg = MyCorpus("../data/rt-polaritydata/rt-polarity.neg", dictionary_neg)
+        loaded_neg_corpus = [vector for vector in corpus_neg]
+        loaded_pos_corpus = [vector for vector in corpus_pos]
 
-print(dictionary_neg)
-print(dictionary_pos)
+        dict_neg2pos = dictionary_pos.merge_with(dictionary_neg)
+        print(dict_neg2pos)
+        # now we can merge corpora from the two incompatible dictionaries into one
+        merged_corpus = itertools.chain(loaded_pos_corpus, dict_neg2pos[loaded_neg_corpus])
 
-corpus = MyCorpus("../data/rt-polaritydata/rt-polarity.neg", dictionary_neg)
+        print (dictionary_pos)
 
-for vector in corpus:  # load one vector into memory at a time
-    print(vector)
+        positives_number = len(loaded_pos_corpus)
+        negatives_number = len(loaded_pos_corpus)
+
+        corpus_matrix = matutils.corpus2dense(merged_corpus, num_terms=len(dictionary_pos.keys()))
+        corpus_matrix = corpus_matrix.transpose()
+
+        train_samples_count = int(positives_number * (100 - TEST_DATA_PERCENTAGE) / 100)
+        x_train_pos = [corpus_matrix[i] for i in range(train_samples_count)]
+        y_train_pos = [1 for _ in range(train_samples_count)]
+        x_test_pos = [corpus_matrix[i] for i in range(train_samples_count, positives_number)]
+        y_test_pos = [1 for _ in range(train_samples_count, positives_number)]
+
+        train_samples_count = int(negatives_number * (100 - TEST_DATA_PERCENTAGE) / 100)
+        x_train_neg = [corpus_matrix[i] for i in range(positives_number, positives_number + train_samples_count)]
+        y_train_neg = [0 for _ in range(train_samples_count)]
+        x_test_neg = [corpus_matrix[i] for i in range(positives_number + train_samples_count, positives_number + negatives_number)]
+        y_test_neg = [0 for _ in range(train_samples_count, positives_number)]
+
+        x_train = x_train_pos + x_train_neg
+        y_train = y_train_pos + y_train_neg
+
+        x_test = x_test_pos + x_test_neg
+        y_test = y_test_pos + y_test_neg
+
+        result = (x_train, y_train), (x_test, y_test)
+        return result
+
+Preprocessor.fetch_data()

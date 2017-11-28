@@ -1,8 +1,5 @@
 import itertools
 
-import numpy as np
-from gensim import models
-
 from gensim import corpora, matutils
 
 from src.my_corpus import MyCorpus, STOP_LIST
@@ -17,12 +14,12 @@ class Preprocessor:
     @staticmethod
     def preprocess(filename):
         documents = []
-        with open(filename) as data_file:
+        with open(filename, encoding='utf-8', errors='ignore') as data_file:
             iter_file = iter(data_file)
             for line in iter_file:
                 documents.append(line)
         # remove common words and tokenize
-        texts = [[unicode(word, errors='ignore') for word in document.lower().split() if word not in STOP_LIST]
+        texts = [[word for word in document.lower().split() if word not in STOP_LIST]
                  for document in documents]
         from collections import defaultdict
         frequency = defaultdict(int)
@@ -39,8 +36,6 @@ class Preprocessor:
         dictionary.save(dictionary_path)  # store the dictionary, for future reference
         print("File saved in: " + dictionary_path)
 
-        # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.neg")
-        # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.pos")
     @staticmethod
     def fetch_data():
         dictionary_neg = corpora.Dictionary.load("../tmp/rt-polarity.neg.dict")
@@ -59,25 +54,23 @@ class Preprocessor:
         # now we can merge corpora from the two incompatible dictionaries into one
         merged_corpus = itertools.chain(loaded_pos_corpus, dict_neg2pos[loaded_neg_corpus])
 
-        print (dictionary_pos)
-
         positives_number = len(loaded_pos_corpus)
-        negatives_number = len(loaded_pos_corpus)
+        negatives_number = len(loaded_neg_corpus)
 
         corpus_matrix = matutils.corpus2dense(merged_corpus, num_terms=len(dictionary_pos.keys()))
         corpus_matrix = corpus_matrix.transpose()
 
-        train_samples_count = int(positives_number * (100 - TEST_DATA_PERCENTAGE) / 100)
+        train_samples_count = int(round(positives_number * (100 - TEST_DATA_PERCENTAGE) / 100, 0))
         x_train_pos = [corpus_matrix[i] for i in range(train_samples_count)]
         y_train_pos = [1 for _ in range(train_samples_count)]
         x_test_pos = [corpus_matrix[i] for i in range(train_samples_count, positives_number)]
         y_test_pos = [1 for _ in range(train_samples_count, positives_number)]
 
-        train_samples_count = int(negatives_number * (100 - TEST_DATA_PERCENTAGE) / 100)
+        train_samples_count = int(round(negatives_number * (100 - TEST_DATA_PERCENTAGE) / 100, 0))
         x_train_neg = [corpus_matrix[i] for i in range(positives_number, positives_number + train_samples_count)]
         y_train_neg = [0 for _ in range(train_samples_count)]
         x_test_neg = [corpus_matrix[i] for i in range(positives_number + train_samples_count, positives_number + negatives_number)]
-        y_test_neg = [0 for _ in range(train_samples_count, positives_number)]
+        y_test_neg = [0 for _ in range(train_samples_count, negatives_number)]
 
         x_train = x_train_pos + x_train_neg
         y_train = y_train_pos + y_train_neg
@@ -88,4 +81,6 @@ class Preprocessor:
         result = (x_train, y_train), (x_test, y_test)
         return result
 
-Preprocessor.fetch_data()
+# Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.neg")
+# Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.pos")
+# Preprocessor.fetch_data()

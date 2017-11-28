@@ -7,8 +7,8 @@ class MyCorpus(object):
         self.dictionary = dictionary
 
     def __iter__(self):
-        for line in open(self.file_name):
+        for line in open(self.file_name, encoding='utf-8', errors='ignore'):
             # assume there's one document per line, tokens separated by whitespace
             yield self.dictionary.doc2bow(
-                [unicode(word, errors='ignore') for word in line.lower().split() if word not in STOP_LIST]
+                [word for word in line.lower().split() if word not in STOP_LIST]
             )

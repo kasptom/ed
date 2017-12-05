@@ -83,4 +83,4 @@ class Preprocessor:
 
 # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.neg")
 # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.pos")
-# Preprocessor.fetch_data()
+Preprocessor.fetch_data()

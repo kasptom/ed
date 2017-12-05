@@ -22,7 +22,7 @@ from what you see with CNNs/MLPs/etc.
 """
 
 max_features = 10000
-maxlen = 80  # cut texts after this number of words (among top max_features most common words)
+maxlen = 100  # cut texts after this number of words (among top max_features most common words)
 batch_size = 32
 
 print('Loading data...')

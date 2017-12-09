@@ -4,7 +4,7 @@ import numpy as np
 from gensim.models import Word2Vec
 
 from src.preprocessing.create_corpus import create_corpus
-from src.preprocessing.load_model import corpus_to_model
+from src.preprocessing.corpus_to_model import corpus_to_model
 
 TEST_DATA_PERCENTAGE = 30
 

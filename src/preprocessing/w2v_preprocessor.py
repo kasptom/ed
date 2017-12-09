@@ -43,10 +43,5 @@ def _document_to_vector(document: List[str], model: Word2Vec):
     word_vectors = []
     for word in document:
         if word in model.wv.vocab:
-            pass
-            # word_vectors.append(np.) TODO
-    np.mean(model[word] if word in model.wv.vocab else np.zeros(model.vector_size) for word in document)
-    return np.array(word_vectors)
-
-
-corpus_to_vectors()
+            word_vectors.append(model[word] if word in model.wv.vocab else np.zeros(model.vector_size))
+    return np.mean(word_vectors, 0)

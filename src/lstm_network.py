@@ -6,6 +6,7 @@ from keras.layers import Dense, Embedding
 from keras.layers import LSTM
 from keras.models import Sequential
 
+from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE
 from src.preprocessing.w2v_preprocessor import corpus_to_vectors
 
 """
@@ -22,7 +23,7 @@ from what you see with CNNs/MLPs/etc.
 
 np.random.seed(7)
 
-max_features = 100
+max_features = WORD_NUMERIC_VECTOR_SIZE
 batch_size = 32
 
 print('Loading data...')
@@ -33,9 +34,9 @@ print('x_train shape:', x_train.shape)
 print('x_test shape:', x_test.shape)
 ########################################################################################################################
 print('Build model...')
-embedding_vecor_length = 32
+embedding_vecor_length = 64
 model = Sequential()
-model.add(Embedding(batch_input_shape=(None, 100), batch_size=batch_size, input_dim=max_features, output_dim=128))
+model.add(Embedding(batch_input_shape=(None, max_features), batch_size=batch_size, input_dim=max_features, output_dim=128))
 model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
 model.add(Dense(1, activation='sigmoid'))
 

@@ -2,3 +2,7 @@
 out/
 data/
 examples/
+notebook/
+labs/
+__pycache__/
+tmp/

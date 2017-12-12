@@ -6,7 +6,7 @@ from keras.layers import Dense, Embedding
 from keras.layers import LSTM
 from keras.models import Sequential
 
-from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE
+from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER
 from src.preprocessing.w2v_preprocessor import corpus_to_vectors
 
 """
@@ -48,7 +48,7 @@ print(model.summary())
 print('Train...')
 model.fit(x_train, y_train,
           batch_size=batch_size,
-          epochs=3,
+          epochs=EPOCHS_NUMBER,
           validation_data=(x_test, y_test))
 
 score, acc = model.evaluate(x_test, y_test)

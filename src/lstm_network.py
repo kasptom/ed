@@ -1,13 +1,13 @@
 # coding=utf-8
-
 from __future__ import print_function
 
+import numpy as np
 from keras.layers import Dense, Embedding
 from keras.layers import LSTM
 from keras.models import Sequential
-from keras.preprocessing import sequence
 
-from src.preprocessor import Preprocessor
+from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER
+from src.preprocessing.w2v_preprocessor import corpus_to_vectors
 
 """
 Trains an LSTM model on the IMDB sentiment classification task.
@@ -21,38 +21,37 @@ Some configurations won't converge.
 from what you see with CNNs/MLPs/etc.
 """
 
-max_features = 10000
-maxlen = 100  # cut texts after this number of words (among top max_features most common words)
+np.random.seed(7)
+
+max_features = WORD_NUMERIC_VECTOR_SIZE
 batch_size = 32
 
 print('Loading data...')
-(x_train, y_train), (x_test, y_test) = Preprocessor.fetch_data()
-print(len(x_train), 'train sequences')
-print(len(x_test), 'test sequences')
 
-print('Pad sequences (samples x time)')
-x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
-x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+(x_train, y_train), (x_test, y_test) = corpus_to_vectors()
+
 print('x_train shape:', x_train.shape)
 print('x_test shape:', x_test.shape)
 
 print('Build model...')
+embedding_vecor_length = 64
 model = Sequential()
-model.add(Embedding(max_features, 100))
-model.add(LSTM(100, dropout=0.2, recurrent_dropout=0.2))
+model.add(
+    Embedding(input_dim=max_features, batch_input_shape=(None, max_features), batch_size=batch_size, output_dim=128)
+)
+model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
 model.add(Dense(1, activation='sigmoid'))
 
-# try using different optimizers and different optimizer configs
-model.compile(loss='binary_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+print(model.summary())
 
 print('Train...')
 model.fit(x_train, y_train,
           batch_size=batch_size,
-          epochs=15,
+          epochs=EPOCHS_NUMBER,
           validation_data=(x_test, y_test))
-score, acc = model.evaluate(x_test, y_test,
-                            batch_size=batch_size)
-print('Test score:', score)
-print('Test accuracy:', acc)
+
+score, acc = model.evaluate(x_test, y_test)
+
+print('Score: %f' % score)
+print('Test accuracy: %f%%' % (acc * 100))

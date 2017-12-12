@@ -7,6 +7,7 @@ from src.my_corpus import MyCorpus, STOP_LIST
 FILE_SEPARATOR = "/"
 TEST_DATA_PERCENTAGE = 30.0
 
+
 class Preprocessor:
     def __init__(self):
         pass
@@ -69,7 +70,8 @@ class Preprocessor:
         train_samples_count = int(round(negatives_number * (100 - TEST_DATA_PERCENTAGE) / 100, 0))
         x_train_neg = [corpus_matrix[i] for i in range(positives_number, positives_number + train_samples_count)]
         y_train_neg = [0 for _ in range(train_samples_count)]
-        x_test_neg = [corpus_matrix[i] for i in range(positives_number + train_samples_count, positives_number + negatives_number)]
+        x_test_neg = [corpus_matrix[i] for i in
+                      range(positives_number + train_samples_count, positives_number + negatives_number)]
         y_test_neg = [0 for _ in range(train_samples_count, negatives_number)]
 
         x_train = x_train_pos + x_train_neg
@@ -83,4 +85,4 @@ class Preprocessor:
 
 # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.neg")
 # Preprocessor.preprocess(filename="../data/rt-polaritydata/rt-polarity.pos")
-Preprocessor.fetch_data()
+# Preprocessor.fetch_data()

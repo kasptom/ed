@@ -3,7 +3,8 @@ from gensim.models import Word2Vec
 from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE
 from src.utils.get_file import full_path
 
-_WORD2VEC_MODEL_FILENAME = full_path("data/w2v_model")
+# _WORD2VEC_MODEL_FILENAME = full_path("data/w2v_model")
+_WORD2VEC_MODEL_FILENAME = full_path("data/w2v_imdb_model")
 
 
 def corpus_to_model(corpus):

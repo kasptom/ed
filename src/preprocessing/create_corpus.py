@@ -7,8 +7,10 @@ PRINT_STATS = True
 
 
 def create_corpus():
-    negative_corpus = _load_corpus(filename=full_path("data/rt-polaritydata/rt-polarity.neg"))
-    positive_corpus = _load_corpus(filename=full_path("data/rt-polaritydata/rt-polarity.pos"))
+    # negative_corpus = _load_corpus(filename=full_path("data/rt-polaritydata/rt-polarity.neg"))
+    # positive_corpus = _load_corpus(filename=full_path("data/rt-polaritydata/rt-polarity.pos"))
+    negative_corpus = _load_corpus(filename=full_path("data/imdb.neg"))
+    positive_corpus = _load_corpus(filename=full_path("data/imdb.pos"))
     negatives_number = len(negative_corpus)
     positives_number = len(positive_corpus)
     corpus = negative_corpus + positive_corpus

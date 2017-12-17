@@ -5,10 +5,9 @@ from gensim import corpora
 from gensim.models import TfidfModel
 from gensim.models import Word2Vec
 
+from src.preprocessing.configuration import TEST_DATA_PERCENTAGE
 from src.preprocessing.corpus_to_model import corpus_to_model
 from src.preprocessing.create_corpus import create_corpus
-
-TEST_DATA_PERCENTAGE = 30
 
 
 def corpus_to_vectors():

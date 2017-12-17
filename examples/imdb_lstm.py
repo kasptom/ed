@@ -78,6 +78,7 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
+print(model.summary())
 
 print('Train...')
 model.fit(x_train, y_train,

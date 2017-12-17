@@ -14,7 +14,8 @@ class TestCorpus_to_vectors(TestCase):
 
     def test_tfidf(self):
         corpus, n, p = create_corpus()
-        tfidf = _tfidf(corpus)
+        tfidf, dictionary = _tfidf(corpus)
         dictionary = corpora.Dictionary(corpus)
         print(corpus[12])
-        print(tfidf[dictionary.doc2bow(corpus[12])])
+        bow = dictionary.doc2bow(corpus[12])
+        print(tfidf[bow])

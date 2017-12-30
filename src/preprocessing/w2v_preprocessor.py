@@ -2,6 +2,7 @@ from typing import List
 
 import numpy as np
 from gensim import corpora
+from gensim import models
 from gensim.models import TfidfModel
 from gensim.models import Word2Vec
 
@@ -13,12 +14,13 @@ from src.preprocessing.create_corpus import create_corpus
 def corpus_to_vectors():
     corpus, neg_number, pos_number = create_corpus()
 
-    model = corpus_to_model(corpus=corpus)
+    model, google_model = corpus_to_model(corpus=corpus)
     tfidf, dictionary = _tfidf(corpus)
 
     document_vectors = [[_document_to_vector(
         document=document,
         model=model,
+        google_model=google_model,
         tfidf=tfidf)] for document in corpus]
 
     x_vec = np.concatenate(tuple(document_vectors), axis=0)
@@ -58,12 +60,12 @@ def _tfidf(corpus):
     return tfidf, dictionary
 
 
-def _document_to_vector(document: List[str], model: Word2Vec, tfidf):
+def _document_to_vector(document: List[str], model: Word2Vec, google_model: Word2Vec, tfidf):
     word_vectors = []
     for word in document:
         # word_vectors.append(model[word] if word in model else np.zeros(model.vector_size))
-        if word in model:
-            word_vectors.append(model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
+        if word in model and word in google_model:
+            word_vectors.append(google_model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
         else:
-            word_vectors.append(np.zeros(model.vector_size))
+            word_vectors.append(np.zeros(google_model.vector_size))
     return np.mean(word_vectors, 0)

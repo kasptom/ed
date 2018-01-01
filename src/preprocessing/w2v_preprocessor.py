@@ -16,11 +16,7 @@ def corpus_to_vectors():
     model, google_model = corpus_to_model(corpus=corpus)
     tfidf, dictionary = _tfidf(corpus)
 
-    document_vectors = [[_document_to_vector(
-        document=document,
-        model=model,
-        google_model=google_model,
-        tfidf=tfidf)] for document in corpus]
+    document_vectors = documents_to_vector_from_w2v(corpus, google_model, model, tfidf)
 
     x_vec = np.concatenate(tuple(document_vectors), axis=0)
     y_vec = np.concatenate((np.zeros(neg_number), np.ones(pos_number)), axis=0)
@@ -50,6 +46,14 @@ def corpus_to_vectors():
     x_train += global_minimum
     x_test += global_minimum
     return result
+
+
+def documents_to_vector_from_w2v(corpus, google_model, model, tfidf):
+    return [[_document_to_vector(
+        document=document,
+        model=model,
+        google_model=google_model,
+        tfidf=tfidf)] for document in corpus]
 
 
 def _tfidf(corpus):

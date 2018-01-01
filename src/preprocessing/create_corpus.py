@@ -1,5 +1,6 @@
 from random import randrange
 
+from src.preprocessing.configuration import CORPUS_FILES
 from src.utils.get_file import full_path
 
 STOP_LIST = set('for a of the and to in'.split())
@@ -7,10 +8,8 @@ PRINT_STATS = True
 
 
 def create_corpus():
-    # negative_corpus = _load_corpus(filename=full_path("data/rt-polaritydata/rt-polarity.neg"))
-    # positive_corpus = _load_corpus(filename=full_path("data/rt-polaritydata/rt-polarity.pos"))
-    negative_corpus = _load_corpus(filename=full_path("data/imdb.neg"))
-    positive_corpus = _load_corpus(filename=full_path("data/imdb.pos"))
+    negative_corpus = _load_corpus(filename=full_path(CORPUS_FILES["negative"]))
+    positive_corpus = _load_corpus(filename=full_path(CORPUS_FILES["positive"]))
     negatives_number = len(negative_corpus)
     positives_number = len(positive_corpus)
     corpus = negative_corpus + positive_corpus

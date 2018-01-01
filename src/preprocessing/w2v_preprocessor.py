@@ -2,7 +2,6 @@ from typing import List
 
 import numpy as np
 from gensim import corpora
-from gensim import models
 from gensim.models import TfidfModel
 from gensim.models import Word2Vec
 
@@ -63,9 +62,20 @@ def _tfidf(corpus):
 def _document_to_vector(document: List[str], model: Word2Vec, google_model: Word2Vec, tfidf):
     word_vectors = []
     for word in document:
-        # word_vectors.append(model[word] if word in model else np.zeros(model.vector_size))
-        if word in model and word in google_model:
-            word_vectors.append(google_model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
-        else:
-            word_vectors.append(np.zeros(google_model.vector_size))
+        # create_with_google_model(google_model, model, tfidf, word, word_vectors)
+        create_with_self_trained_model(model, tfidf, word, word_vectors)
     return np.mean(word_vectors, 0)
+
+
+def create_with_google_model(google_model, model, tfidf, word, word_vectors):
+    if word in model and word in google_model:
+        word_vectors.append(google_model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
+    else:
+        word_vectors.append(np.zeros(google_model.vector_size))
+
+
+def create_with_self_trained_model(model, tfidf, word, word_vectors):
+    if word in model:
+        word_vectors.append(model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
+    else:
+        word_vectors.append(np.zeros(model.vector_size))

@@ -7,7 +7,11 @@ from src.preprocessing.corpus_to_model import corpus_to_model
 class TestCorpus_to_model(TestCase):
     def test_corpus_to_model(self):
         corpus, negatives_no, positives_no = create_corpus()
-        model = corpus_to_model(corpus)
+        model, google_model = corpus_to_model(corpus)
         print(model.wv.similarity('old', 'yes'))
         print(model.wv.similarity('young', 'yes'))
         print(model.wv.similarity('man', 'woman'))
+
+        print(google_model.wv.similarity('old', 'yes'))
+        print(google_model.wv.similarity('young', 'yes'))
+        print(google_model.wv.similarity('man', 'woman'))

@@ -1,11 +1,10 @@
 from gensim import models
 from gensim.models import Word2Vec
 
-from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE
+from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE, CORPUS_FILES
 from src.utils.get_file import full_path
 
-# _WORD2VEC_MODEL_FILENAME = full_path("data/w2v_model")
-_WORD2VEC_MODEL_FILENAME = full_path("data/w2v_imdb_model")
+_WORD2VEC_MODEL_FILENAME = full_path("data/w2v_" + CORPUS_FILES['label'] + "_model")
 
 
 def corpus_to_model(corpus):

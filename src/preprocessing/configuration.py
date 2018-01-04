@@ -5,6 +5,9 @@ RECURRENT_DROPOUT = 0.2
 BATCH_SIZE = 32
 TEST_DATA_PERCENTAGE = 30
 
+GOOGLE_NEWS_WORD_LIMIT = 500000
+USE_GOOGLE_W2V = False
+
 CORPUS_FILES_IMDB = {
     "label": "imdb",
     "positive": "data/imdb.pos",
@@ -17,7 +20,7 @@ CORPUS_FILES_RT_POLARITY = {
     "negative": "data/rt-polaritydata/rt-polarity.neg"
 }
 
-CORPUS_FILES = CORPUS_FILES_IMDB
+CORPUS_FILES = CORPUS_FILES_RT_POLARITY
 
 
 def print_configuration():

@@ -1,19 +1,22 @@
 from typing import List
 
+import logging
 import numpy as np
 from gensim import corpora
 from gensim.models import TfidfModel
 from gensim.models import Word2Vec
 
-from src.preprocessing.configuration import TEST_DATA_PERCENTAGE
-from src.preprocessing.corpus_to_model import corpus_to_model
+from src.preprocessing.configuration import TEST_DATA_PERCENTAGE, USE_GOOGLE_W2V
+from src.preprocessing.corpus_to_model import corpus_to_model, load_google_w2v_model
 from src.preprocessing.create_corpus import create_corpus
 
 
 def corpus_to_vectors():
     corpus, neg_number, pos_number = create_corpus()
 
-    model, google_model = corpus_to_model(corpus=corpus)
+    model = corpus_to_model(corpus=corpus)
+    google_model = load_google_w2v_model() if USE_GOOGLE_W2V else None
+
     tfidf, dictionary = _tfidf(corpus)
 
     document_vectors = documents_to_vector_from_w2v(corpus, google_model, model, tfidf)
@@ -49,6 +52,8 @@ def corpus_to_vectors():
 
 
 def documents_to_vector_from_w2v(corpus, google_model, model, tfidf):
+    if google_model:
+        logging.debug("document to vector - using google model")
     return [[_document_to_vector(
         document=document,
         model=model,
@@ -66,8 +71,10 @@ def _tfidf(corpus):
 def _document_to_vector(document: List[str], model: Word2Vec, google_model: Word2Vec, tfidf):
     word_vectors = []
     for word in document:
-        # create_with_google_model(google_model, model, tfidf, word, word_vectors)
-        create_with_self_trained_model(model, tfidf, word, word_vectors)
+        if google_model:
+            create_with_google_model(google_model, model, tfidf, word, word_vectors)
+        else:
+            create_with_self_trained_model(model, tfidf, word, word_vectors)
     return np.mean(word_vectors, 0)
 
 

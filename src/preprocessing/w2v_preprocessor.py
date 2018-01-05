@@ -52,13 +52,25 @@ def corpus_to_vectors():
 
 
 def documents_to_vector_from_w2v(corpus, google_model, model, tfidf):
+    non_zero_vectos_all_documents = 0
+    all_documents_words_count = 0
+
     if google_model:
-        logging.debug("document to vector - using google model")
-    return [[_document_to_vector(
-        document=document,
-        model=model,
-        google_model=google_model,
-        tfidf=tfidf)] for document in corpus]
+        logging.debug("documents to vectors - using google model")
+    vectorized_documents = []
+    for document in corpus:
+        all_documents_words_count += len(document)
+        document_vector, non_zero_vectors = _document_to_vector(
+            document=document,
+            model=model,
+            google_model=google_model,
+            tfidf=tfidf)
+        non_zero_vectos_all_documents += non_zero_vectors
+        vectorized_documents.append([document_vector])
+
+    print("percentage of appearances of words existing in used model: %.2f" %
+          ((non_zero_vectos_all_documents / all_documents_words_count) * 100))
+    return vectorized_documents
 
 
 def _tfidf(corpus):
@@ -70,23 +82,32 @@ def _tfidf(corpus):
 
 def _document_to_vector(document: List[str], model: Word2Vec, google_model: Word2Vec, tfidf):
     word_vectors = []
+    counter_words_in_dictionary = 0
     for word in document:
         if google_model:
-            create_with_google_model(google_model, model, tfidf, word, word_vectors)
+            if create_with_google_model(google_model, model, tfidf, word, word_vectors):
+                counter_words_in_dictionary += 1
         else:
-            create_with_self_trained_model(model, tfidf, word, word_vectors)
-    return np.mean(word_vectors, 0)
+            if create_with_self_trained_model(model, tfidf, word, word_vectors):
+                counter_words_in_dictionary += 1
+    return np.mean(word_vectors, 0), counter_words_in_dictionary
 
 
 def create_with_google_model(google_model, model, tfidf, word, word_vectors):
-    if word in model and word in google_model:
-        word_vectors.append(google_model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
+    word_in_google_model = word in google_model
+    word_in_model = word in model
+    if word_in_model and word_in_google_model:
+        word_vectors.append(google_model.wv.word_vec(word))
+        # * tfidf.idfs[model.wv.vocab[word].index])
     else:
         word_vectors.append(np.zeros(google_model.vector_size))
+    return word_in_google_model
 
 
 def create_with_self_trained_model(model, tfidf, word, word_vectors):
-    if word in model:
+    word_in_model = word in model
+    if word_in_model:
         word_vectors.append(model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
     else:
         word_vectors.append(np.zeros(model.vector_size))
+    return word_in_model

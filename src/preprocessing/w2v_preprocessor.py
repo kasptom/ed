@@ -8,11 +8,13 @@ from gensim.models import Word2Vec
 
 from src.preprocessing.configuration import TEST_DATA_PERCENTAGE, USE_GOOGLE_W2V
 from src.preprocessing.corpus_to_model import corpus_to_model, load_google_w2v_model
-from src.preprocessing.create_corpus import create_corpus
+from src.preprocessing.create_corpus import create_corpus_and_labels
+
+BATCH_SIZE = 100
 
 
 def corpus_to_vectors():
-    corpus, neg_number, pos_number = create_corpus()
+    corpus, labels = create_corpus_and_labels()
 
     model = corpus_to_model(corpus=corpus)
     google_model = load_google_w2v_model() if USE_GOOGLE_W2V else None
@@ -21,26 +23,44 @@ def corpus_to_vectors():
 
     document_vectors = documents_to_vector_from_w2v(corpus, google_model, model, tfidf)
 
-    x_vec = np.concatenate(tuple(document_vectors), axis=0)
-    y_vec = np.concatenate((np.zeros(neg_number), np.ones(pos_number)), axis=0)
+    train_samples_count = round(BATCH_SIZE * (100 - TEST_DATA_PERCENTAGE) / 100, 0)
 
-    train_samples_count = int(round(pos_number * (100 - TEST_DATA_PERCENTAGE) / 100, 0))
-    x_train_pos = [x_vec[i] for i in range(train_samples_count)]
-    y_train_pos = [y_vec[i] for i in range(train_samples_count)]
-    x_test_pos = [x_vec[i] for i in range(train_samples_count, pos_number)]
-    y_test_pos = [y_vec[i] for i in range(train_samples_count, pos_number)]
+    x_train = []
+    y_train = []
+    x_test = []
+    y_test = []
 
-    train_samples_count = int(round(neg_number * (100 - TEST_DATA_PERCENTAGE) / 100, 0))
-    x_train_neg = [x_vec[i] for i in range(pos_number, pos_number + train_samples_count)]
-    y_train_neg = [y_vec[i] for i in range(pos_number, pos_number + train_samples_count)]
-    x_test_neg = [x_vec[i] for i in range(pos_number + train_samples_count, pos_number + neg_number)]
-    y_test_neg = [y_vec[i] for i in range(pos_number + train_samples_count, pos_number + neg_number)]
+    doc_iter = iter(document_vectors)
+    label_iter = iter(labels)
+    counter = 0
+    while True:
+        try:
+            document_vector = next(doc_iter)
+        except StopIteration:
+            break
+        if counter < train_samples_count:
+            x_train.append([document_vector])
+        else:
+            x_test.append([document_vector])
+        counter = (counter + 1) % BATCH_SIZE
 
-    x_train = np.array(x_train_pos + x_train_neg)
-    y_train = np.array(y_train_pos + y_train_neg)
+    counter = 0
+    while True:
+        try:
+            label = next(label_iter)
+        except StopIteration:
+            break
+        if counter < train_samples_count:
+            y_train.append(label)
+        else:
+            y_test.append(label)
+        counter = (counter + 1) % BATCH_SIZE
 
-    x_test = np.array(x_test_pos + x_test_neg)
-    y_test = np.array(y_test_pos + y_test_neg)
+    x_train = np.concatenate(tuple(x_train), axis=0)
+    y_train = np.array(y_train)
+
+    x_test = np.concatenate(tuple(x_test), axis=0)
+    y_test = np.array(y_test)
 
     result = (x_train, y_train), (x_test, y_test)
 
@@ -66,7 +86,7 @@ def documents_to_vector_from_w2v(corpus, google_model, model, tfidf):
             google_model=google_model,
             tfidf=tfidf)
         non_zero_vectos_all_documents += non_zero_vectors
-        vectorized_documents.append([document_vector])
+        vectorized_documents.append(document_vector)
 
     print("percentage of appearances of words existing in used model: %.2f" %
           ((non_zero_vectos_all_documents / all_documents_words_count) * 100))

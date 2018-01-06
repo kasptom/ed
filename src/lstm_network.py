@@ -1,16 +1,17 @@
 # coding=utf-8
 from __future__ import print_function
 
+import time
+
 import numpy as np
 from keras.layers import Dense, Embedding
 from keras.layers import LSTM
 from keras.models import Sequential
-import time
 
-from src.preprocessing import configuration
-from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, \
+from src import configuration
+from src.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, \
     BATCH_SIZE
-from src.preprocessing.w2v_preprocessor import corpus_to_vectors
+from src.preprocessing.doc2vec_preprocessor import corpus_to_vectors
 
 """
 # Notes
@@ -22,7 +23,6 @@ from what you see with CNNs/MLPs/etc.
 """
 
 np.random.seed(7)
-
 
 print('Loading data...')
 start = time.time()

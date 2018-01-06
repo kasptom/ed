@@ -3,3 +3,5 @@ keras
 tensorflow
 matplotlib
 jupyter
+numpy
+nose

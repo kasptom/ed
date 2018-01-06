@@ -24,11 +24,11 @@ def create_w2v_from_corpus(corpus=None):
 
 
 def load_google_w2v_model(words_limit=GOOGLE_NEWS_WORD_LIMIT):
-    logging.debug("Lading google word2vec ...")
+    logging.info("Lading google word2vec ...")
     google_model = models.KeyedVectors.load_word2vec_format(
         full_path("data/google/GoogleNews-vectors-negative300.bin"),
         binary=True,
         limit=words_limit
     )
-    logging.debug("Finished google word2vec loading")
+    logging.info("Finished google word2vec loading")
     return google_model

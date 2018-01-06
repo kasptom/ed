@@ -21,7 +21,8 @@ def corpus_to_vectors():
     model = create_w2v_from_corpus(corpus=corpus)
     google_model = load_google_w2v_model() if USE_GOOGLE_W2V else None
 
-    tfidf, dictionary = _tfidf(corpus)
+    dictionary = _dictionary(corpus)
+    tfidf = _tfidf(corpus, dictionary)
 
     document_vectors = documents_to_vector_from_w2v(corpus, google_model, model, tfidf)
 
@@ -78,7 +79,7 @@ def documents_to_vector_from_w2v(corpus, google_model, model, tfidf):
     all_documents_words_count = 0
 
     if google_model:
-        logging.debug("documents to vectors - using google model")
+        logging.info("documents to vectors - using google model")
     vectorized_documents = []
     for document in corpus:
         all_documents_words_count += len(document)
@@ -95,25 +96,31 @@ def documents_to_vector_from_w2v(corpus, google_model, model, tfidf):
     return vectorized_documents
 
 
-def _tfidf(corpus):
+def _tfidf(corpus, dictionary):
     tfidf_file_name = get_tfidf_file_name(CORPUS_FILES["label"])
-    dictionary_file_name = get_dictionary_file_name(CORPUS_FILES["label"])
-    dictionary = corpora.Dictionary(corpus)
     try:
         tfidf = TfidfModel.load(tfidf_file_name)
-        dictionary = corpora.Dictionary.load(dictionary_file_name)
     except FileNotFoundError:
         corpus_numeric = [dictionary.doc2bow(document) for document in corpus]
         tfidf = TfidfModel(corpus=corpus_numeric)
         print("File does not exist - creating the tfidf model")
 
         create_file_and_folders_if_not_exist(tfidf_file_name)
-        create_file_and_folders_if_not_exist(dictionary_file_name)
-
         tfidf.save(tfidf_file_name)
-        dictionary.save(dictionary_file_name)
 
     return tfidf, dictionary
+
+
+def _dictionary(corpus):
+    dictionary_file_name = get_dictionary_file_name(CORPUS_FILES["label"])
+    dictionary = corpora.Dictionary(corpus)
+    try:
+        dictionary = corpora.Dictionary.load(dictionary_file_name)
+    except FileNotFoundError:
+        print("File does not exist - creating the tfidf model")
+        create_file_and_folders_if_not_exist(dictionary_file_name)
+        dictionary.save(dictionary_file_name)
+    return dictionary
 
 
 def _document_to_vector(document: List[str], model: Word2Vec, google_model: Word2Vec, tfidf):

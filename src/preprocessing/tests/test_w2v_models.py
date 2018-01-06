@@ -15,5 +15,9 @@ class TestCorpusW2VModels(TestCase):
         print(model.wv.similarity('man', 'woman'))
 
         print("woman - king + man = ...")
-        most_similar = google_model.wv.most_similar(positive=['woman', 'king'], negative=['man'])
-        print(most_similar)
+
+        google_most_similar = google_model.wv.most_similar(positive=['woman', 'king'], negative=['man'])
+        print("google: ", google_most_similar)
+
+        most_similar = model.wv.most_similar(positive=['woman', 'king'], negative=['man'])
+        print("model: ", most_similar)

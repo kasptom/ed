@@ -6,9 +6,11 @@ from gensim import corpora
 from gensim.models import TfidfModel
 from gensim.models import Word2Vec
 
-from src.preprocessing.configuration import TEST_DATA_PERCENTAGE, USE_GOOGLE_W2V
-from src.preprocessing.corpus_to_model import corpus_to_model, load_google_w2v_model
+from src.configuration import TEST_DATA_PERCENTAGE, USE_GOOGLE_W2V, CORPUS_FILES, get_tfidf_file_name, \
+    get_dictionary_file_name
+from src.preprocessing.w2v_loader import create_w2v_from_corpus, load_google_w2v_model
 from src.preprocessing.create_corpus import create_corpus_and_labels
+from src.utils.get_file import create_file_and_folders_if_not_exist
 
 BATCH_SIZE = 100
 
@@ -16,7 +18,7 @@ BATCH_SIZE = 100
 def corpus_to_vectors():
     corpus, labels = create_corpus_and_labels()
 
-    model = corpus_to_model(corpus=corpus)
+    model = create_w2v_from_corpus(corpus=corpus)
     google_model = load_google_w2v_model() if USE_GOOGLE_W2V else None
 
     tfidf, dictionary = _tfidf(corpus)
@@ -94,9 +96,23 @@ def documents_to_vector_from_w2v(corpus, google_model, model, tfidf):
 
 
 def _tfidf(corpus):
+    tfidf_file_name = get_tfidf_file_name(CORPUS_FILES["label"])
+    dictionary_file_name = get_dictionary_file_name(CORPUS_FILES["label"])
     dictionary = corpora.Dictionary(corpus)
-    corpus_numeric = [dictionary.doc2bow(document) for document in corpus]
-    tfidf = TfidfModel(corpus=corpus_numeric)
+    try:
+        tfidf = TfidfModel.load(tfidf_file_name)
+        dictionary = corpora.Dictionary.load(dictionary_file_name)
+    except FileNotFoundError:
+        corpus_numeric = [dictionary.doc2bow(document) for document in corpus]
+        tfidf = TfidfModel(corpus=corpus_numeric)
+        print("File does not exist - creating the tfidf model")
+
+        create_file_and_folders_if_not_exist(tfidf_file_name)
+        create_file_and_folders_if_not_exist(dictionary_file_name)
+
+        tfidf.save(tfidf_file_name)
+        dictionary.save(dictionary_file_name)
+
     return tfidf, dictionary
 
 
@@ -117,10 +133,9 @@ def create_with_google_model(google_model, model, tfidf, word, word_vectors):
     word_in_google_model = word in google_model
     word_in_model = word in model
     if word_in_model and word_in_google_model:
-        word_vectors.append(google_model.wv.word_vec(word))
-        # * tfidf.idfs[model.wv.vocab[word].index])
+        word_vectors.append(google_model.wv.word_vec(word) * tfidf.idfs[model.wv.vocab[word].index])
     else:
-        word_vectors.append(np.zeros(google_model.vector_size))
+        word_vectors.append(np.random.rand(google_model.vector_size))
     return word_in_google_model
 
 

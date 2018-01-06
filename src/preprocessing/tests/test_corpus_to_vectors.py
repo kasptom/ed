@@ -3,7 +3,7 @@ from unittest import TestCase
 from gensim import corpora
 
 from src.preprocessing.create_corpus import create_corpus_and_labels
-from src.preprocessing.w2v_preprocessor import corpus_to_vectors, _tfidf
+from src.preprocessing.doc2vec_preprocessor import corpus_to_vectors, _tfidf
 
 
 class TestCorpus_to_vectors(TestCase):

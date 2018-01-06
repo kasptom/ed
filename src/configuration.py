@@ -1,16 +1,18 @@
+from src.utils.get_file import full_path
+
 WORD_NUMERIC_VECTOR_SIZE = 300
 TEST_DATA_PERCENTAGE = 30
 
 GOOGLE_NEWS_WORD_LIMIT = 500000
-USE_GOOGLE_W2V = False
+USE_GOOGLE_W2V = True
 
 CORPUS_FILES_IMDB = {
     "label": "imdb",
     "positive": "data/imdb.pos",
     "negative": "data/imdb.neg",
     "batch_size": 64,
-    "dropout": 0.5,
-    "recurrent_dropout": 0.3,
+    "dropout": 0.2,
+    "recurrent_dropout": 0.2,
     "epochs": 3
 }
 
@@ -45,3 +47,15 @@ def print_configuration():
         (CORPUS_FILES["label"], WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, BATCH_SIZE,
          TEST_DATA_PERCENTAGE, USE_GOOGLE_W2V))
     print("---------------------------------------------")
+
+
+def get_tfidf_file_name(corpus_label: str):
+    return full_path("data/tfidfs/" + corpus_label + "_tfidf_model")
+
+
+def get_dictionary_file_name(corpus_label: str):
+    return full_path("data/dicts/" + corpus_label + "_dict")
+
+
+def get_w2v_file_name(corpus_label: str):
+    return full_path("data/word2vecs/" + corpus_label + "_model")

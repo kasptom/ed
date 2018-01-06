@@ -2,20 +2,22 @@ import logging
 from gensim import models
 from gensim.models import Word2Vec
 
-from src.preprocessing.configuration import WORD_NUMERIC_VECTOR_SIZE, CORPUS_FILES, GOOGLE_NEWS_WORD_LIMIT
-from src.utils.get_file import full_path
-
-_WORD2VEC_MODEL_FILENAME = full_path("data/w2v_" + CORPUS_FILES['label'] + "_model")
+from src.configuration import WORD_NUMERIC_VECTOR_SIZE, CORPUS_FILES, GOOGLE_NEWS_WORD_LIMIT, get_w2v_file_name
+from src.utils.get_file import full_path, create_file_and_folders_if_not_exist
 
 
-def corpus_to_model(corpus):
+def create_w2v_from_corpus(corpus):
+    word2vec_model_file_name = get_w2v_file_name(CORPUS_FILES["label"])
     try:
-        model = Word2Vec.load(_WORD2VEC_MODEL_FILENAME)
+        model = Word2Vec.load(word2vec_model_file_name)
     except FileNotFoundError:
-        print("File does not exist - creating the model")
+        print("File does not exist - creating the w2v model")
         model = Word2Vec(corpus, size=WORD_NUMERIC_VECTOR_SIZE)
         model.train(corpus, total_examples=len(corpus), epochs=10)
-        model.save(_WORD2VEC_MODEL_FILENAME)
+
+        create_file_and_folders_if_not_exist(word2vec_model_file_name)
+
+        model.save(word2vec_model_file_name)
     print("train loss: %d" % model.get_latest_training_loss())
 
     return model

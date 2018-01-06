@@ -1,5 +1,5 @@
 from unittest import TestCase
-from src.preprocessing.configuration import print_configuration
+from src.configuration import print_configuration
 
 
 class TestPrintConfiguration(TestCase):

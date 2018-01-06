@@ -2,7 +2,7 @@ from random import randrange
 
 from gensim import utils
 
-from src.preprocessing.configuration import CORPUS_FILES
+from src.configuration import CORPUS_FILES
 from src.utils.get_file import full_path
 
 STOP_LIST = set('for a of the and to in'.split())

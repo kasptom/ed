@@ -40,13 +40,11 @@ def create_corpus_and_labels():
 
 def _load_corpus(filename: str):
     documents_tokenized = []
-    google_model = load_google_w2v_model() if USE_GOOGLE_W2V else None
     with open(filename, encoding='utf-8', errors='ignore') as data_file:
         iter_file = iter(data_file)
         for line in iter_file:
-            tokens = list(utils.tokenize(line, deacc=True))
-            filtered_tokens = list(filter(lambda x: x in google_model, tokens))
-            documents_tokenized.append(filtered_tokens)
+            tokens = list(utils.tokenize(line, deacc=True, lower=True))
+            documents_tokenized.append(tokens)
     # remove common words and tokenize
     return documents_tokenized
 

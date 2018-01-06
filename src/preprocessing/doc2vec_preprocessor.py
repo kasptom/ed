@@ -108,7 +108,7 @@ def _tfidf(corpus, dictionary):
         create_file_and_folders_if_not_exist(tfidf_file_name)
         tfidf.save(tfidf_file_name)
 
-    return tfidf, dictionary
+    return tfidf
 
 
 def _dictionary(corpus):

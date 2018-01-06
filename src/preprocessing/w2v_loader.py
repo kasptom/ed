@@ -6,7 +6,7 @@ from src.configuration import WORD_NUMERIC_VECTOR_SIZE, CORPUS_FILES, GOOGLE_NEW
 from src.utils.get_file import full_path, create_file_and_folders_if_not_exist
 
 
-def create_w2v_from_corpus(corpus):
+def create_w2v_from_corpus(corpus=None):
     word2vec_model_file_name = get_w2v_file_name(CORPUS_FILES["label"])
     try:
         model = Word2Vec.load(word2vec_model_file_name)

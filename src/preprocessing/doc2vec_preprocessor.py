@@ -111,13 +111,13 @@ def _tfidf(corpus, dictionary):
     return tfidf
 
 
-def _dictionary(corpus):
+def _dictionary(corpus) -> corpora.Dictionary:
     dictionary_file_name = get_dictionary_file_name(CORPUS_FILES["label"])
-    dictionary = corpora.Dictionary(corpus)
     try:
         dictionary = corpora.Dictionary.load(dictionary_file_name)
     except FileNotFoundError:
-        print("File does not exist - creating the tfidf model")
+        print("File does not exist - creating the dictionary")
+        dictionary = corpora.Dictionary(corpus)
         create_file_and_folders_if_not_exist(dictionary_file_name)
         dictionary.save(dictionary_file_name)
     return dictionary

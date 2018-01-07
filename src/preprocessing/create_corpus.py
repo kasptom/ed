@@ -2,8 +2,7 @@ from random import randrange
 
 from gensim import utils
 
-from src.configuration import CORPUS_FILES, USE_GOOGLE_W2V
-from src.preprocessing.w2v_loader import load_google_w2v_model
+from src.configuration import CORPUS_FILES
 from src.utils.get_file import full_path
 
 STOP_LIST = set('for a of the and to in'.split())
@@ -40,12 +39,14 @@ def create_corpus_and_labels():
 
 def _load_corpus(filename: str):
     documents_tokenized = []
+    # porter_stemmer = PorterStemmer()
+
     with open(filename, encoding='utf-8', errors='ignore') as data_file:
         iter_file = iter(data_file)
         for line in iter_file:
+            # stemmed_line = porter_stemmer.stem_sentence(line)
             tokens = list(utils.tokenize(line, deacc=True, lower=True))
             documents_tokenized.append(tokens)
-    # remove common words and tokenize
     return documents_tokenized
 
 

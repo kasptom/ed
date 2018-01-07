@@ -4,14 +4,14 @@ from __future__ import print_function
 import time
 
 import numpy as np
-from keras.layers import Dense, Embedding
+from keras.layers import Dense
 from keras.layers import LSTM
 from keras.models import Sequential
 
 from src import configuration
 from src.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, \
     BATCH_SIZE
-from src.preprocessing.doc2vec_preprocessor import corpus_to_vectors
+from src.preprocessing.document_as_w2v_groups import get_train_and_test_vectors
 
 """
 # Notes
@@ -27,7 +27,7 @@ np.random.seed(7)
 print('Loading data...')
 start = time.time()
 
-(x_train, y_train), (x_test, y_test) = corpus_to_vectors()
+(x_train, y_train), (x_test, y_test) = get_train_and_test_vectors()
 
 end = time.time()
 print("time elapsed: ", end - start, " seconds")
@@ -39,13 +39,12 @@ print('Build model...')
 start = time.time()
 
 model = Sequential()
-model.add(
-    Embedding(WORD_NUMERIC_VECTOR_SIZE, 128)
-)
-model.add(LSTM(128, dropout=DROPOUT, recurrent_dropout=RECURRENT_DROPOUT))
-model.add(Dense(1, activation='sigmoid'))
 
+model.add(
+    LSTM(200, input_shape=(BATCH_SIZE, WORD_NUMERIC_VECTOR_SIZE), dropout=DROPOUT, recurrent_dropout=RECURRENT_DROPOUT))
+model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
 print(model.summary())
 
 configuration.print_configuration()

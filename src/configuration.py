@@ -3,8 +3,8 @@ from src.utils.get_file import full_path
 WORD_NUMERIC_VECTOR_SIZE = 300
 TEST_DATA_PERCENTAGE = 30
 
-GOOGLE_NEWS_WORD_LIMIT = 500000
-USE_GOOGLE_W2V = True
+# GOOGLE_NEWS_WORD_LIMIT = 500000
+GOOGLE_NEWS_WORD_LIMIT = None
 
 CORPUS_FILES_IMDB = {
     "label": "imdb",
@@ -13,7 +13,9 @@ CORPUS_FILES_IMDB = {
     "batch_size": 64,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
-    "epochs": 3
+    "epochs": 14,
+    "use_google_w2v": False
+
 }
 
 CORPUS_FILES_RT_POLARITY = {
@@ -21,16 +23,18 @@ CORPUS_FILES_RT_POLARITY = {
     "positive": "data/rt-polaritydata/rt-polarity.pos",
     "negative": "data/rt-polaritydata/rt-polarity.neg",
     "batch_size": 32,
-    "dropout": 0.5,
-    "recurrent_dropout": 0.5,
-    "epochs": 3
+    "dropout": 0.2,
+    "recurrent_dropout": 0.2,
+    "epochs": 5,
+    "use_google_w2v": True
 }
 
 CORPUS_FILES = CORPUS_FILES_IMDB
 BATCH_SIZE = CORPUS_FILES["batch_size"]
 DROPOUT = CORPUS_FILES["dropout"]
 RECURRENT_DROPOUT = CORPUS_FILES["recurrent_dropout"]
-EPOCHS_NUMBER = 15
+USE_GOOGLE_W2V = CORPUS_FILES["use_google_w2v"]
+EPOCHS_NUMBER = CORPUS_FILES["epochs"]
 
 
 def print_configuration():
@@ -59,3 +63,11 @@ def get_dictionary_file_name(corpus_label: str):
 
 def get_w2v_file_name(corpus_label: str):
     return full_path("data/word2vecs/" + corpus_label + "_model")
+
+
+def set_corpus(corpus_label: str):
+    global CORPUS_FILES
+    if corpus_label == "imdb":
+        CORPUS_FILES = CORPUS_FILES_IMDB
+    elif corpus_label == "rt-polarity":
+        CORPUS_FILES = CORPUS_FILES_RT_POLARITY

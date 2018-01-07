@@ -37,7 +37,7 @@ print('x_test shape:', x_test.shape)
 
 print('Build model...')
 start = time.time()
-embedding_vector_length = 64
+
 model = Sequential()
 model.add(
     Embedding(WORD_NUMERIC_VECTOR_SIZE, 128)

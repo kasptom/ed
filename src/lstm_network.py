@@ -32,8 +32,8 @@ start = time.time()
 end = time.time()
 print("time elapsed: ", end - start, " seconds")
 
-print('x_train shape:', x_train.shape)
-print('x_test shape:', x_test.shape)
+# print('x_train shape:', x_train.shape)
+# print('x_test shape:', x_test.shape)
 
 print('Build model...')
 start = time.time()

@@ -20,13 +20,19 @@ def get_train_and_test_vectors():
     prev_idx = 0
     for idx in range(batch_size, len(documents_vectors_batches) + batch_size, batch_size):
         if counter < sample_size:
-            x_train.append(documents_vectors_batches[prev_idx:idx])
-            y_train.append(labels_batches[prev_idx:idx])
+            x_train += documents_vectors_batches[prev_idx:idx]
+            y_train += (labels_batches[prev_idx:idx])
         else:
-            x_test.append(documents_vectors_batches[prev_idx:idx])
-            y_test.append(labels_batches[prev_idx:idx])
+            x_test += (documents_vectors_batches[prev_idx:idx])
+            y_test += (labels_batches[prev_idx:idx])
         prev_idx = idx
-        counter += 1
+        counter = (counter + 1) % batch_size
+
+    # x_train = np.array(x_train)
+    # y_train = np.array(y_train)
+    #
+    # x_test = np.array(x_test)
+    # y_test = np.array(y_test)
 
     return (x_train, y_train), (x_test, y_test)
 
@@ -44,8 +50,8 @@ def corpus_to_vector_batches():
 
     for (document, label) in zip(corpus, labels):
         document_batch, label_batch = document_to_batch(document, label, google_model, batch_size)
-        corpus_vector_batches.append(document_batch)
-        labels_batches.append(label_batch)
+        corpus_vector_batches += document_batch
+        labels_batches += label_batch
 
     return corpus_vector_batches, labels_batches
 

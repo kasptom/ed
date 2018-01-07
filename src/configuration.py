@@ -5,7 +5,6 @@ TEST_DATA_PERCENTAGE = 30
 
 # GOOGLE_NEWS_WORD_LIMIT = 500000
 GOOGLE_NEWS_WORD_LIMIT = None
-USE_GOOGLE_W2V = True
 
 CORPUS_FILES_IMDB = {
     "label": "imdb",
@@ -14,7 +13,9 @@ CORPUS_FILES_IMDB = {
     "batch_size": 64,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
-    "epochs": 3
+    "epochs": 14,
+    "use_google_w2v": False
+
 }
 
 CORPUS_FILES_RT_POLARITY = {
@@ -22,17 +23,18 @@ CORPUS_FILES_RT_POLARITY = {
     "positive": "data/rt-polaritydata/rt-polarity.pos",
     "negative": "data/rt-polaritydata/rt-polarity.neg",
     "batch_size": 32,
-    "dropout": 0.5,
-    "recurrent_dropout": 0.5,
-    "epochs": 3
+    "dropout": 0.2,
+    "recurrent_dropout": 0.2,
+    "epochs": 5,
+    "use_google_w2v": True
 }
 
-TIME_STEPS = 350
-CORPUS_FILES = CORPUS_FILES_RT_POLARITY
+CORPUS_FILES = CORPUS_FILES_IMDB
 BATCH_SIZE = CORPUS_FILES["batch_size"]
 DROPOUT = CORPUS_FILES["dropout"]
 RECURRENT_DROPOUT = CORPUS_FILES["recurrent_dropout"]
-EPOCHS_NUMBER = 15
+USE_GOOGLE_W2V = CORPUS_FILES["use_google_w2v"]
+EPOCHS_NUMBER = CORPUS_FILES["epochs"]
 
 
 def print_configuration():

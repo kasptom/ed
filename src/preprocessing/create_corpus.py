@@ -46,7 +46,8 @@ def _load_corpus(filename: str):
         for line in iter_file:
             # stemmed_line = porter_stemmer.stem_sentence(line)
             tokens = list(utils.tokenize(line, deacc=True, lower=True))
-            documents_tokenized.append(tokens)
+            filtered_tokens = list(filter(lambda x: x not in STOP_LIST, tokens))
+            documents_tokenized.append(filtered_tokens)
     return documents_tokenized
 
 

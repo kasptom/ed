@@ -2,7 +2,7 @@ from random import randrange
 
 from gensim import utils
 
-from src.configuration import CORPUS_FILES
+from src.configuration import DATA_SET
 from src.utils.get_file import full_path
 
 STOP_LIST = set('for a of the and to in'.split())
@@ -10,8 +10,8 @@ PRINT_STATS = True
 
 
 def create_corpus_and_labels():
-    negative_corpus = _load_corpus(filename=full_path(CORPUS_FILES["negative"]))
-    positive_corpus = _load_corpus(filename=full_path(CORPUS_FILES["positive"]))
+    negative_corpus = _load_corpus(filename=full_path(DATA_SET["negative"]))
+    positive_corpus = _load_corpus(filename=full_path(DATA_SET["positive"]))
     negatives_number = len(negative_corpus)
     positives_number = len(positive_corpus)
 

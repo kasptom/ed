@@ -2,12 +2,12 @@ import logging
 from gensim import models
 from gensim.models import Word2Vec
 
-from src.configuration import WORD_NUMERIC_VECTOR_SIZE, CORPUS_FILES, GOOGLE_NEWS_WORD_LIMIT, get_w2v_file_name
+from src.configuration import WORD_NUMERIC_VECTOR_SIZE, DATA_SET, GOOGLE_NEWS_WORD_LIMIT, get_w2v_file_name
 from src.utils.get_file import full_path, create_file_and_folders_if_not_exist
 
 
 def create_w2v_from_corpus(corpus):
-    word2vec_model_file_name = get_w2v_file_name(CORPUS_FILES["label"])
+    word2vec_model_file_name = get_w2v_file_name(DATA_SET["label"])
     try:
         model = Word2Vec.load(word2vec_model_file_name)
     except FileNotFoundError:

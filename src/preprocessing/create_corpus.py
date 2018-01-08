@@ -34,7 +34,7 @@ def create_corpus_and_labels():
         print("average document length %d, negatives: %d, positives %d, total %d"
               % get_corpus_stats(corpus, negatives_number, positives_number))
         print(corpus[randrange(len(corpus))])
-    return corpus[:100], labels[:100]
+    return corpus, labels
 
 
 def _load_corpus(filename: str):

@@ -13,8 +13,6 @@ def get_train_and_test_vectors():
     x_test = []
     y_test = []
 
-    batch_size = DATA_SET["batch_size"]
-
     sample_size = 100
     train_samples_count = round(sample_size * (100 - TEST_DATA_PERCENTAGE) / 100, 0)
     counter = 0
@@ -42,15 +40,15 @@ def get_train_and_test_vectors():
 def corpus_to_vector_batches():
     corpus, labels = create_corpus_and_labels()
 
-    model = create_w2v_from_corpus(corpus=corpus)
-    # google_model = load_google_w2v_model() if USE_GOOGLE_W2V else None
+    # model = create_w2v_from_corpus(corpus=corpus)
+    google_model = load_google_w2v_model() if USE_GOOGLE_W2V else None
 
     # each batch conforms to one document in the corpus
     corpus_vector_batches = []
     batch_size = DATA_SET["batch_size"]
 
     for document in corpus:
-        document_batch = document_to_batch(document, model, batch_size)
+        document_batch = document_to_batch(document, google_model, batch_size)
         corpus_vector_batches.append(document_batch)
     return corpus_vector_batches, labels
 

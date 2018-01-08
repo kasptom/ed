@@ -10,12 +10,11 @@ DATA_SET_IMDB = {
     "label": "imdb",
     "positive": "data/imdb.pos",
     "negative": "data/imdb.neg",
-    "batch_size": 350,
+    "batch_size": 80,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
     "epochs": 14,
     "use_google_w2v": True
-
 }
 
 DATA_SET_RT_POLARITY = {
@@ -29,7 +28,7 @@ DATA_SET_RT_POLARITY = {
     "use_google_w2v": True
 }
 
-DATA_SET = DATA_SET_RT_POLARITY
+DATA_SET = DATA_SET_IMDB
 TIME_STEP = DATA_SET["batch_size"]
 DROPOUT = DATA_SET["dropout"]
 RECURRENT_DROPOUT = DATA_SET["recurrent_dropout"]

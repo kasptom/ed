@@ -4,13 +4,14 @@ from __future__ import print_function
 import time
 
 import numpy as np
-from keras.layers import Dense
+from keras.layers import Dense, Dropout, Embedding
 from keras.layers import LSTM
 from keras.models import Sequential
+from keras.preprocessing import sequence
 
 from src import configuration
 from src.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, \
-    BATCH_SIZE
+    TIME_STEP
 from src.preprocessing.document_as_w2v_groups import get_train_and_test_vectors
 
 """
@@ -32,16 +33,14 @@ start = time.time()
 end = time.time()
 print("time elapsed: ", end - start, " seconds")
 
-# print('x_train shape:', x_train.shape)
-# print('x_test shape:', x_test.shape)
+print('x_train shape:', x_train.shape)
+print('x_test shape:', x_test.shape)
 
 print('Build model...')
 start = time.time()
 
 model = Sequential()
-
-model.add(
-    LSTM(200, input_shape=(BATCH_SIZE, WORD_NUMERIC_VECTOR_SIZE), dropout=DROPOUT, recurrent_dropout=RECURRENT_DROPOUT))
+model.add(LSTM(200, input_shape=(TIME_STEP, WORD_NUMERIC_VECTOR_SIZE), dropout=DROPOUT, recurrent_dropout=RECURRENT_DROPOUT))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -55,11 +54,11 @@ print("time elapsed: ", end - start, " seconds")
 print('Train...')
 start = time.time()
 model.fit(x_train, y_train,
-          batch_size=BATCH_SIZE,
+          batch_size=32,
           epochs=EPOCHS_NUMBER,
           validation_data=(x_test, y_test))
 
-score, acc = model.evaluate(x_test, y_test)
+score, acc = model.evaluate(x_test, y_test, batch_size=32)
 
 print('Score: %f' % score)
 print('Test accuracy: %f%%' % (acc * 100))

@@ -30,7 +30,7 @@ DATA_SET_RT_POLARITY = {
 }
 
 DATA_SET = DATA_SET_RT_POLARITY
-BATCH_SIZE = DATA_SET["batch_size"]
+TIME_STEP = DATA_SET["batch_size"]
 DROPOUT = DATA_SET["dropout"]
 RECURRENT_DROPOUT = DATA_SET["recurrent_dropout"]
 USE_GOOGLE_W2V = DATA_SET["use_google_w2v"]
@@ -48,7 +48,7 @@ def print_configuration():
         "batch size: %d, "
         "test data percentage: %.2f "
         "use google w2v: %s " %
-        (DATA_SET["label"], WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, BATCH_SIZE,
+        (DATA_SET["label"], WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, TIME_STEP,
          TEST_DATA_PERCENTAGE, USE_GOOGLE_W2V))
     print("---------------------------------------------")
 

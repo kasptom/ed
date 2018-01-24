@@ -1,5 +1,3 @@
-from genericpath import isfile
-from macpath import join
 from os import listdir
 
 import numpy as np
@@ -8,6 +6,18 @@ from src.configuration import DATA_SET, get_vector_labels_file_name, TEST_DATA_P
 
 prev_val_counter = 0
 files_counter = 0
+
+
+def get_train_samples_count():
+    _data_path = get_vector_words_directory(DATA_SET['label'])
+    _files = [f for f in listdir(_data_path)]
+    return len(_files) * ((100 - TEST_DATA_PERCENTAGE) / 100)
+
+
+def get_test_samples_count():
+    _data_path = get_vector_words_directory(DATA_SET['label'])
+    _files = [f for f in listdir(_data_path)]
+    return len(_files) * TEST_DATA_PERCENTAGE / 100
 
 
 def get_train_generator(batch_size=DATA_SET['batch_size']):

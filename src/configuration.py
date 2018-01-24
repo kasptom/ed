@@ -10,7 +10,8 @@ DATA_SET_IMDB = {
     "label": "imdb",
     "positive": "data/imdb.pos",
     "negative": "data/imdb.neg",
-    "batch_size": 350,
+    "time_steps": 350,
+    "batch_size": 64,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
     "epochs": 14,
@@ -21,7 +22,8 @@ DATA_SET_RT_POLARITY = {
     "label": "rt-polarity",
     "positive": "data/rt-polaritydata/rt-polarity.pos",
     "negative": "data/rt-polaritydata/rt-polarity.neg",
-    "batch_size": 35,
+    "time_steps": 35,
+    "batch_size": 20,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
     "epochs": 5,
@@ -29,7 +31,7 @@ DATA_SET_RT_POLARITY = {
 }
 
 DATA_SET = DATA_SET_RT_POLARITY
-TIME_STEP = DATA_SET["batch_size"]
+TIME_STEPS = DATA_SET["time_steps"]
 DROPOUT = DATA_SET["dropout"]
 RECURRENT_DROPOUT = DATA_SET["recurrent_dropout"]
 USE_GOOGLE_W2V = DATA_SET["use_google_w2v"]
@@ -47,7 +49,7 @@ def print_configuration():
         "batch size: %d, "
         "test data percentage: %.2f "
         "use google w2v: %s " %
-        (DATA_SET["label"], WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, TIME_STEP,
+        (DATA_SET["label"], WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, TIME_STEPS,
          TEST_DATA_PERCENTAGE, USE_GOOGLE_W2V))
     print("---------------------------------------------")
 
@@ -73,7 +75,8 @@ def get_vector_words_directory(corpus_label: str):
 
 
 def get_batch_file_name(document_idx):
-    return get_vector_words_directory(DATA_SET['label']) + "/" + str(document_idx) + ".npy"
+    document_idx_str = "%010d" % document_idx
+    return get_vector_words_directory(DATA_SET['label']) + "/" + document_idx_str + ".npy"
 
 
 def get_vector_labels_file_name(corpus_label: str):

@@ -21,11 +21,11 @@ def ensure_word_numeric_representation_created():
 
         w2v_model = load_google_w2v_model() if USE_GOOGLE_W2V else create_w2v_from_corpus(corpus)
 
-        # each batch conforms to one document in the corpus
-        batch_size = DATA_SET["batch_size"]
+        # each time_step portion conforms to one document in the corpus
+        time_steps = DATA_SET["time_steps"]
 
         for document_idx in range(len(corpus)):
-            document_batch = document_to_batch(corpus[document_idx], w2v_model, batch_size)
+            document_batch = document_to_batch(corpus[document_idx], w2v_model, time_steps)
             batch_file_name = get_batch_file_name(document_idx)
             create_file_and_folders_if_not_exist(batch_file_name)
             np.save(batch_file_name, document_batch)
@@ -36,12 +36,12 @@ def ensure_word_numeric_representation_created():
         logging.info("word vector files created")
 
 
-def document_to_batch(document, model: Word2Vec, batch_size):
+def document_to_batch(document, model: Word2Vec, time_steps):
     """
     Converts the document to its numeric representation
     :param document:
     :param model:
-    :param batch_size: maximum number of words that will be taken into account during vector computation
+    :param time_steps: maximum number of words that will be taken into account during vector computation
     :return:
     """
     words_vectors_batch = []
@@ -51,9 +51,9 @@ def document_to_batch(document, model: Word2Vec, batch_size):
         if word in model:
             words_vectors_batch.append(model.wv[word])
             counter += 1
-        if counter >= batch_size:
+        if counter >= time_steps:
             break
-    for _ in range(counter, batch_size):
+    for _ in range(counter, time_steps):
         words_vectors_batch.append(np.zeros(WORD_NUMERIC_VECTOR_SIZE))
 
     return np.array(words_vectors_batch)

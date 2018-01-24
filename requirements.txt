@@ -1,6 +1,6 @@
 gensim
 keras
-tensorflow
+tensorflow-gpu
 matplotlib
 jupyter
 numpy

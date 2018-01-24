@@ -10,7 +10,7 @@ DATA_SET_IMDB = {
     "label": "imdb",
     "positive": "data/imdb.pos",
     "negative": "data/imdb.neg",
-    "batch_size": 80,
+    "batch_size": 350,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
     "epochs": 14,
@@ -21,14 +21,14 @@ DATA_SET_RT_POLARITY = {
     "label": "rt-polarity",
     "positive": "data/rt-polaritydata/rt-polarity.pos",
     "negative": "data/rt-polaritydata/rt-polarity.neg",
-    "batch_size": 32,
+    "batch_size": 35,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
     "epochs": 5,
     "use_google_w2v": True
 }
 
-DATA_SET = DATA_SET_IMDB
+DATA_SET = DATA_SET_RT_POLARITY
 TIME_STEP = DATA_SET["batch_size"]
 DROPOUT = DATA_SET["dropout"]
 RECURRENT_DROPOUT = DATA_SET["recurrent_dropout"]
@@ -52,6 +52,10 @@ def print_configuration():
     print("---------------------------------------------")
 
 
+def get_network_model_snapshot(corpus_label: str):
+    return full_path("data/lstm-net/" + corpus_label + ".h5")
+
+
 def get_tfidf_file_name(corpus_label: str):
     return full_path("data/tfidfs/" + corpus_label + "_tfidf_model")
 
@@ -64,9 +68,20 @@ def get_w2v_file_name(corpus_label: str):
     return full_path("data/word2vecs/" + corpus_label + "_model")
 
 
-def set_corpus(corpus_label: str):
-    global DATA_SET
-    if corpus_label == "imdb":
-        DATA_SET = DATA_SET_IMDB
-    elif corpus_label == "rt-polarity":
-        DATA_SET = DATA_SET_RT_POLARITY
+def get_vector_words_directory(corpus_label: str):
+    return full_path("data/vector_words/" + corpus_label + "_words_timestep" + str(DATA_SET['batch_size']))
+
+
+def get_batch_file_name(document_idx):
+    return get_vector_words_directory(DATA_SET['label']) + "/" + str(document_idx) + ".npy"
+
+
+def get_vector_labels_file_name(corpus_label: str):
+    return full_path("data/vector_words/" + corpus_label + "_labels.npy")
+
+
+def get_csv_log_file_name(corpus_label: str):
+    return full_path(
+        "log/" + corpus_label + "_timestep" + str(DATA_SET['batch_size']) + "_drout_" + str(
+            DATA_SET['dropout']) + "_rdrout_" +
+        str(DATA_SET["recurrent_dropout"]) + ".csv")

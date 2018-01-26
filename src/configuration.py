@@ -32,6 +32,7 @@ DATA_SET_RT_POLARITY = {
 
 DATA_SET = DATA_SET_RT_POLARITY
 TIME_STEPS = DATA_SET["time_steps"]
+BATCH_SIZE = DATA_SET['batch_size']
 DROPOUT = DATA_SET["dropout"]
 RECURRENT_DROPOUT = DATA_SET["recurrent_dropout"]
 USE_GOOGLE_W2V = DATA_SET["use_google_w2v"]

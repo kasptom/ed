@@ -6,3 +6,5 @@ notebook/
 labs/
 __pycache__/
 tmp/
+log/
+lstm-net/

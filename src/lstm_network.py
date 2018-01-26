@@ -4,15 +4,19 @@ from __future__ import print_function
 import time
 
 import numpy as np
-from keras.layers import Dense, Dropout, Embedding
+from keras import callbacks
+from keras.layers import Dense
 from keras.layers import LSTM
 from keras.models import Sequential
-from keras.preprocessing import sequence
 
 from src import configuration
 from src.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, \
-    TIME_STEP
-from src.preprocessing.document_as_w2v_groups import get_train_and_test_vectors
+    TIME_STEPS, get_network_model_snapshot, DATA_SET, get_csv_log_file_name, BATCH_SIZE, EPOCH_PATIENCE
+from src.preprocessing.document_as_w2v_groups import ensure_word_numeric_representation_created
+from src.utils.data_generator import DataGenerator
+
+from src.utils.get_file import create_file_and_folders_if_not_exist
+from src.utils.log_summary import log_summary
 
 """
 # Notes
@@ -28,19 +32,24 @@ np.random.seed(7)
 print('Loading data...')
 start = time.time()
 
-(x_train, y_train), (x_test, y_test) = get_train_and_test_vectors()
+ensure_word_numeric_representation_created()
+
+data_generator = DataGenerator()
 
 end = time.time()
 print("time elapsed: ", end - start, " seconds")
 
-print('x_train shape:', x_train.shape)
-print('x_test shape:', x_test.shape)
-
 print('Build model...')
 start = time.time()
 
+create_file_and_folders_if_not_exist(get_csv_log_file_name(DATA_SET['label']))
+
+callbacks = [callbacks.EarlyStopping(monitor='val_loss', patience=EPOCH_PATIENCE),
+             callbacks.CSVLogger(get_csv_log_file_name(DATA_SET['label']))]
+
 model = Sequential()
-model.add(LSTM(200, input_shape=(TIME_STEP, WORD_NUMERIC_VECTOR_SIZE), dropout=DROPOUT, recurrent_dropout=RECURRENT_DROPOUT))
+model.add(
+    LSTM(200, input_shape=(TIME_STEPS, WORD_NUMERIC_VECTOR_SIZE), dropout=DROPOUT, recurrent_dropout=RECURRENT_DROPOUT))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -53,14 +62,22 @@ print("time elapsed: ", end - start, " seconds")
 
 print('Train...')
 start = time.time()
-model.fit(x_train, y_train,
-          batch_size=32,
-          epochs=EPOCHS_NUMBER,
-          validation_data=(x_test, y_test))
+model.fit_generator(data_generator.get_train_generator(),
+                    epochs=EPOCHS_NUMBER,
+                    validation_data=data_generator.get_test_generator(),
+                    samples_per_epoch=data_generator.get_train_samples_count() // BATCH_SIZE,
+                    callbacks=callbacks,
+                    validation_steps=data_generator.get_test_samples_count() // BATCH_SIZE)
 
-score, acc = model.evaluate(x_test, y_test, batch_size=32)
+score, acc = model.evaluate_generator(data_generator.get_test_generator(),
+                                      steps=data_generator.get_test_samples_count() // BATCH_SIZE)
+
+create_file_and_folders_if_not_exist(get_network_model_snapshot(DATA_SET['label']))
+model.save(get_network_model_snapshot(DATA_SET['label']))
 
 print('Score: %f' % score)
 print('Test accuracy: %f%%' % (acc * 100))
 end = time.time()
 print("time elapsed: ", end - start, " seconds")
+
+log_summary(score, (acc * 100), end - start)

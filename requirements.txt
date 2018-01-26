@@ -1,7 +1,8 @@
 gensim
 keras
-tensorflow
+tensorflow-gpu
 matplotlib
 jupyter
 numpy
 nose
+h5py

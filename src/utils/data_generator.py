@@ -36,7 +36,7 @@ class DataGenerator:
             y = []
             counter = 0
             while counter < batch_size:
-                x.append(np.load(self.data_path + "/" + self.train_files[idx]))
+                x.append(np.load(self.data_path + "/" + self.train_files[idx])[:DATA_SET['time_steps']])
                 y.append(np.array(self.train_labels[idx]))
                 idx = (idx + 1) % self.train_samples_count
                 counter += 1
@@ -49,7 +49,7 @@ class DataGenerator:
             y = []
             counter = 0
             while counter < batch_size:
-                x.append(np.load(self.data_path + "/" + self.test_files[idx]))
+                x.append(np.load(self.data_path + "/" + self.test_files[idx])[:DATA_SET['time_steps']])
                 y.append(np.array(self.test_labels[idx]))
                 idx = (idx + 1) % self.test_samples_count
                 counter += 1

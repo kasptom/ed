@@ -3,8 +3,8 @@ import logging
 import numpy as np
 from gensim.models import Word2Vec
 
-from src.configuration import USE_GOOGLE_W2V, DATA_SET, WORD_NUMERIC_VECTOR_SIZE, TEST_DATA_PERCENTAGE, \
-    get_vector_labels_file_name, get_batch_file_name
+from src.configuration import USE_GOOGLE_W2V, DATA_SET, WORD_NUMERIC_VECTOR_SIZE, get_vector_labels_file_name, \
+    get_batch_file_name
 from src.preprocessing.create_corpus import create_corpus_and_labels
 from src.preprocessing.w2v_loader import load_google_w2v_model, create_w2v_from_corpus
 from src.utils.get_file import create_file_and_folders_if_not_exist
@@ -14,7 +14,7 @@ def ensure_word_numeric_representation_created():
     labels_file_name = get_vector_labels_file_name(DATA_SET['label'])
 
     try:
-        np.load(labels_file_name)
+        np.load(get_batch_file_name(0))
     except IOError:
         logging.info("word vector files does not exist - creating...")
         corpus, labels = create_corpus_and_labels()

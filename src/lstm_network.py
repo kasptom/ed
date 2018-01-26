@@ -11,11 +11,12 @@ from keras.models import Sequential
 
 from src import configuration
 from src.configuration import WORD_NUMERIC_VECTOR_SIZE, EPOCHS_NUMBER, DROPOUT, RECURRENT_DROPOUT, \
-    TIME_STEPS, get_network_model_snapshot, DATA_SET, get_csv_log_file_name, BATCH_SIZE
+    TIME_STEPS, get_network_model_snapshot, DATA_SET, get_csv_log_file_name, BATCH_SIZE, EPOCH_PATIENCE
 from src.preprocessing.document_as_w2v_groups import ensure_word_numeric_representation_created
 from src.utils.data_generator import DataGenerator
 
 from src.utils.get_file import create_file_and_folders_if_not_exist
+from src.utils.log_summary import log_summary
 
 """
 # Notes
@@ -43,7 +44,7 @@ start = time.time()
 
 create_file_and_folders_if_not_exist(get_csv_log_file_name(DATA_SET['label']))
 
-callbacks = [callbacks.EarlyStopping(monitor='val_loss', patience=3),
+callbacks = [callbacks.EarlyStopping(monitor='val_loss', patience=EPOCH_PATIENCE),
              callbacks.CSVLogger(get_csv_log_file_name(DATA_SET['label']))]
 
 model = Sequential()
@@ -78,3 +79,5 @@ print('Score: %f' % score)
 print('Test accuracy: %f%%' % (acc * 100))
 end = time.time()
 print("time elapsed: ", end - start, " seconds")
+
+log_summary(score, (acc * 100), end - start)

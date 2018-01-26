@@ -65,9 +65,10 @@ start = time.time()
 model.fit_generator(data_generator.get_train_generator(),
                     epochs=EPOCHS_NUMBER,
                     validation_data=data_generator.get_test_generator(),
-                    samples_per_epoch=data_generator.get_train_samples_count() // BATCH_SIZE,
+                    steps_per_epoch=data_generator.get_train_samples_count() // BATCH_SIZE,
                     callbacks=callbacks,
-                    validation_steps=data_generator.get_test_samples_count() // BATCH_SIZE)
+                    validation_steps=data_generator.get_test_samples_count() // BATCH_SIZE,
+                    workers=8)
 
 score, acc = model.evaluate_generator(data_generator.get_test_generator(),
                                       steps=data_generator.get_test_samples_count() // BATCH_SIZE)

@@ -13,7 +13,7 @@ DATA_SET_IMDB = {
     "negative": "data/imdb.neg",
     "time_steps": 150,
     "max_time_steps": 350,
-    "batch_size": 100,
+    "batch_size": 64,
     "dropout": 0.4,
     "recurrent_dropout": 0.4,
     "epochs": 40,
@@ -33,7 +33,7 @@ DATA_SET_RT_POLARITY = {
     "use_google_w2v": True
 }
 
-DATA_SET = DATA_SET_RT_POLARITY
+DATA_SET = DATA_SET_IMDB
 TIME_STEPS = DATA_SET["time_steps"]
 BATCH_SIZE = DATA_SET['batch_size']
 DROPOUT = DATA_SET["dropout"]
@@ -65,11 +65,12 @@ def configuration_string():
 
 
 def get_network_model_snapshot(corpus_label: str):
-    return full_path("lstm-net/{}_timestep{}_drout{}_rdrout_batch{}.h5".format(
+    return full_path("lstm-net/{}_timestep{}_drout{}_rdrout{}_batch{}.h5".format(
         corpus_label,
         str(DATA_SET['time_steps']),
         str(DATA_SET['dropout']),
         str(DATA_SET["recurrent_dropout"]),
+        str(DATA_SET['batch_size'])
     ))
 
 

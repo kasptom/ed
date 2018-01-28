@@ -1,32 +1,66 @@
-import os
+import numpy as np
 
-from src.configuration import get_vector_labels_file_name, get_vector_words_directory
-from src.utils.get_file import full_path
+from src.configuration import get_vector_labels_file_name, DATA_SET_TREC, \
+    get_batch_file_name_for_dataset, get_vector_words_directory_for_dataset
+from src.preprocessing.document_as_w2v_groups import document_to_batch
+from src.preprocessing.w2v_loader import load_google_w2v_model
+from src.utils.get_file import full_path, create_file_and_folders_if_not_exist
+
+LABELS = {
+    'DESC': [],
+    'HUM': [],
+    'ENTY': [],
+    'NUM': [],
+    'LOC': []
+}
+CORPUS_FILE_NAME = full_path("data/trec/trec.corp")
+
+# see http://cogcomp.org/Data/QA/QC/
+TREC_TEXT_FILE_PATH = full_path("data/trec/trec.txt")
+WORD_VECTORS_DIRECTORY = get_vector_words_directory_for_dataset('trec', DATA_SET_TREC)
+LABELS_FILE_PATH = get_vector_labels_file_name('trec')
 
 
 def trec_preprocess():
-    # see http://cogcomp.org/Data/QA/QC/
-    trec_text_file = full_path("data/trec/trec.txt")
-    labels_file_name = get_vector_labels_file_name('trec')
-    word_vectors_directory = get_vector_words_directory('trec')
-    corpus_file_name = "data/trec/trec.corp"
-
-    create_corpus_file(trec_text_file)
+    create_corpus_file()
 
 
-def create_corpus_file(trec_text_file):
-    labels = {}
-    buffer = []
-    with open(trec_text_file, 'r', encoding='utf-8', errors='ignore') as file:
+def create_corpus_file():
+    model = load_google_w2v_model()
+
+    with open(TREC_TEXT_FILE_PATH, 'r', encoding='utf-8', errors='ignore') as file:
         iter_file = iter(file)
         for line in iter_file:
             label = line[:str(line).find(":")]
-            if label not in labels:
-                labels[label] = 1
-            else:
-                labels[label] += 1
-            line = line[str(line).find(" ") + 1:]
+            if label in LABELS:
+                line = line[str(line).find(" ") + 1:]
+                LABELS[label].append(line)
 
-            # buffer += line
-    print(labels)
+    labels = []
+    create_file_and_folders_if_not_exist(WORD_VECTORS_DIRECTORY)
+
+    keys = list(LABELS.keys())
+    counter = 0
+    for key in keys:
+        for document in (LABELS[key]):
+            batch_file_name = get_batch_file_name_for_dataset(counter, DATA_SET_TREC)
+            create_file_and_folders_if_not_exist(batch_file_name)
+
+            word_vector = document_to_batch(document, model, DATA_SET_TREC['time_steps'])
+
+            np.save(batch_file_name, word_vector)
+            counter += 1
+
+            labels.append(_generate_label_vector(keys.index(key)))
+
+    create_file_and_folders_if_not_exist(LABELS_FILE_PATH)
+    np.save(LABELS_FILE_PATH, labels)
+
+
+def _generate_label_vector(label_idx: int) -> np.array:
+    label_vec = np.zeros(len(LABELS))
+    label_vec[label_idx] = 1
+    return label_vec
+
+
 trec_preprocess()

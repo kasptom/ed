@@ -102,6 +102,10 @@ def get_vector_words_directory(corpus_label: str):
     return full_path("data/vector_words/" + corpus_label + "_words_max_timestep" + str(DATA_SET['max_time_steps']))
 
 
+def get_vector_words_directory_for_dataset(corpus_label: str, dataset):
+    return full_path("data/vector_words/" + corpus_label + "_words_max_timestep" + str(dataset['max_time_steps']))
+
+
 def get_batch_file_name(document_idx):
     """
     Name of the file with the vectorised version of the document (stored as a group of
@@ -111,6 +115,18 @@ def get_batch_file_name(document_idx):
     """
     document_idx_str = "%010d" % document_idx
     return get_vector_words_directory(DATA_SET['label']) + "/" + document_idx_str + ".npy"
+
+
+def get_batch_file_name_for_dataset(document_idx, data_set):
+    """
+    Name of the file with the vectorised version of the document (stored as a group of
+    MAX_TIME_STEPS x WORD_NUMERIC_VECTOR_SIZE) numpy vectors
+    :param document_idx:
+    :param data_set:
+    :return:
+    """
+    document_idx_str = "%010d" % document_idx
+    return get_vector_words_directory_for_dataset(data_set['label'], data_set) + "/" + document_idx_str + ".npy"
 
 
 def get_vector_labels_file_name(corpus_label: str):

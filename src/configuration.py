@@ -33,6 +33,18 @@ DATA_SET_RT_POLARITY = {
     "use_google_w2v": True
 }
 
+DATA_SET_TREC = {
+    "label": "trec",
+    "corpus_file": "data/trec/trec.corp",
+    "time_steps": 35,
+    "max_time_steps": 35,
+    "batch_size": 20,
+    "dropout": 0.2,
+    "recurrent_dropout": 0.2,
+    "epochs": 40,
+    "use_google_w2v": True
+}
+
 DATA_SET = DATA_SET_IMDB
 TIME_STEPS = DATA_SET["time_steps"]
 BATCH_SIZE = DATA_SET['batch_size']

@@ -29,8 +29,12 @@ class LstmNet:
         self.callbacks = [callbacks.EarlyStopping(monitor='val_loss', patience=EPOCH_PATIENCE),
                           callbacks.CSVLogger(get_csv_log_file_name(DATA_SET['label']))]
         self.model = self.build_model()
+        self.data_generator = self.create_data_generator()
 
     def build_model(self):
+        raise NotImplementedError()
+
+    def create_data_generator(self):
         raise NotImplementedError()
 
     def train_network(self):
@@ -40,8 +44,6 @@ class LstmNet:
         start = time.time()
 
         ensure_word_numeric_representation_created()
-
-        data_generator = DataGenerator()
 
         end = time.time()
         print("time elapsed: ", end - start, " seconds")
@@ -60,16 +62,16 @@ class LstmNet:
 
         print('Train...')
         start = time.time()
-        self.model.fit_generator(data_generator.get_train_generator(),
+        self.model.fit_generator(self.data_generator.get_train_generator(),
                                  epochs=EPOCHS_NUMBER,
-                                 validation_data=data_generator.get_test_generator(),
-                                 steps_per_epoch=data_generator.get_train_samples_count() // BATCH_SIZE,
+                                 validation_data=self.data_generator.get_test_generator(),
+                                 steps_per_epoch=self.data_generator.get_train_samples_count() // BATCH_SIZE,
                                  callbacks=self.callbacks,
-                                 validation_steps=data_generator.get_test_samples_count() // BATCH_SIZE,
+                                 validation_steps=self.data_generator.get_test_samples_count() // BATCH_SIZE,
                                  workers=8)
 
-        score, acc = self.model.evaluate_generator(data_generator.get_test_generator(),
-                                                   steps=data_generator.get_test_samples_count() // BATCH_SIZE)
+        score, acc = self.model.evaluate_generator(self.data_generator.get_test_generator(),
+                                                   steps=self.data_generator.get_test_samples_count() // BATCH_SIZE)
 
         create_file_and_folders_if_not_exist(get_network_model_snapshot(DATA_SET['label']))
         self.model.save(get_network_model_snapshot(DATA_SET['label']))

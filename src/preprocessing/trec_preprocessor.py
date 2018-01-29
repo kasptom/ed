@@ -41,17 +41,25 @@ def create_corpus_file():
 
     keys = list(LABELS.keys())
     counter = 0
-    for key in keys:
-        for document in (LABELS[key]):
-            batch_file_name = get_batch_file_name_for_dataset(counter, DATA_SET_TREC)
-            create_file_and_folders_if_not_exist(batch_file_name)
+    sublist_counter = 0
+    document_available = True
 
-            word_vector = document_to_batch(document, model, DATA_SET_TREC['time_steps'])
+    while document_available:
+        document_available = False
+        for key in keys:
+            if sublist_counter < len(LABELS[key]):
+                document_available = True
+                document = LABELS[key][sublist_counter]
+                batch_file_name = get_batch_file_name_for_dataset(counter, DATA_SET_TREC)
+                create_file_and_folders_if_not_exist(batch_file_name)
 
-            np.save(batch_file_name, word_vector)
-            counter += 1
+                word_vector = document_to_batch(document, model, DATA_SET_TREC['time_steps'])
 
-            labels.append(_generate_label_vector(keys.index(key)))
+                np.save(batch_file_name, word_vector)
+                counter += 1
+
+                labels.append(_generate_label_vector(keys.index(key)))
+        sublist_counter += 1
 
     create_file_and_folders_if_not_exist(LABELS_FILE_PATH)
     np.save(LABELS_FILE_PATH, labels)

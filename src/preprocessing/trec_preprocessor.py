@@ -44,25 +44,30 @@ def create_corpus_file():
     sublist_counter = 0
     document_available = True
 
-    while document_available:
-        document_available = False
-        for key in keys:
-            if sublist_counter < len(LABELS[key]):
-                document_available = True
-                document = LABELS[key][sublist_counter]
-                batch_file_name = get_batch_file_name_for_dataset(counter, DATA_SET_TREC)
-                create_file_and_folders_if_not_exist(batch_file_name)
+    with open(CORPUS_FILE_NAME, 'w+') as corpus_file:
+        while document_available:
+            document_available = False
+            for key in keys:
+                if sublist_counter < len(LABELS[key]):
+                    document_available = True
 
-                word_vector = document_to_batch(document, model, DATA_SET_TREC['time_steps'])
+                    document = LABELS[key][sublist_counter]
 
-                np.save(batch_file_name, word_vector)
-                counter += 1
+                    corpus_file.write(document)
 
-                labels.append(_generate_label_vector(keys.index(key)))
-        sublist_counter += 1
+                    batch_file_name = get_batch_file_name_for_dataset(counter, DATA_SET_TREC)
+                    create_file_and_folders_if_not_exist(batch_file_name)
 
-    create_file_and_folders_if_not_exist(LABELS_FILE_PATH)
-    np.save(LABELS_FILE_PATH, labels)
+                    word_vector = document_to_batch(document, model, DATA_SET_TREC['time_steps'])
+
+                    np.save(batch_file_name, word_vector)
+                    counter += 1
+
+                    labels.append(_generate_label_vector(keys.index(key)))
+            sublist_counter += 1
+
+        create_file_and_folders_if_not_exist(LABELS_FILE_PATH)
+        np.save(LABELS_FILE_PATH, labels)
 
 
 def _generate_label_vector(label_idx: int) -> np.array:

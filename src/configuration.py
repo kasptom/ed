@@ -36,7 +36,7 @@ DATA_SET_RT_POLARITY = {
 DATA_SET_TREC = {
     "label": "trec",
     "corpus_file": "data/trec/trec.corp",
-    "time_steps": 35,
+    "time_steps": 10,
     "max_time_steps": 35,
     "batch_size": 20,
     "dropout": 0.2,

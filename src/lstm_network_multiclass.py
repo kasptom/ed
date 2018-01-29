@@ -12,8 +12,9 @@ class LstmMultiClass(LstmNet):
         model.add(
             LSTM(200, input_shape=(TIME_STEPS, WORD_NUMERIC_VECTOR_SIZE), dropout=DROPOUT,
                  recurrent_dropout=RECURRENT_DROPOUT))
-        model.add(Dense(1, activation='sigmoid'))
+        model.add(Dense(5, activation='sigmoid'))
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+        return model
 
     def create_data_generator(self):
         return DataGenerator(DATA_SET_TREC)

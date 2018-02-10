@@ -58,7 +58,7 @@ def create_corpus_file():
                     batch_file_name = get_batch_file_name_for_dataset(counter, DATA_SET_TREC)
                     create_file_and_folders_if_not_exist(batch_file_name)
 
-                    word_vector = document_to_batch(document, model, DATA_SET_TREC['time_steps'])
+                    word_vector = document_to_batch(document, model, DATA_SET_TREC['max_time_steps'])
 
                     np.save(batch_file_name, word_vector)
                     counter += 1

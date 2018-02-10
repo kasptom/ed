@@ -37,15 +37,15 @@ DATA_SET_TREC = {
     "label": "trec",
     "corpus_file": "data/trec/trec.corp",
     "time_steps": 10,
-    "max_time_steps": 24,
-    "batch_size": 15,
+    "max_time_steps": 35,
+    "batch_size": 20,
     "dropout": 0.2,
     "recurrent_dropout": 0.2,
     "epochs": 40,
     "use_google_w2v": True
 }
 
-DATA_SET = DATA_SET_RT_POLARITY
+DATA_SET = DATA_SET_TREC
 TIME_STEPS = DATA_SET["time_steps"]
 BATCH_SIZE = DATA_SET['batch_size']
 DROPOUT = DATA_SET["dropout"]

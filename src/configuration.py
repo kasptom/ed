@@ -45,7 +45,7 @@ DATA_SET_TREC = {
     "use_google_w2v": True
 }
 
-DATA_SET = DATA_SET_TREC
+DATA_SET = DATA_SET_IMDB
 TIME_STEPS = DATA_SET["time_steps"]
 BATCH_SIZE = DATA_SET['batch_size']
 DROPOUT = DATA_SET["dropout"]

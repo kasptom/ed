@@ -47,7 +47,7 @@ def check_imdb_lstm_network():
     document_pos = list(filter(lambda x: x not in STOP_LIST, tokens_pos))
     x_pos = np.array([document_to_batch(document_pos, model, 150)])
 
-    model = keras.models.load_model(full_path("lstm-net_BAK/imdb_timestep150_drout0.4_rdrout0.4_batch64.h5"))
+    model = keras.models.load_model(full_path("lstm-net-backups/imdb_timestep150_drout0.4_rdrout0.4_batch64.h5"))
     print(evaluate(model, x_neg))
     print(evaluate(model, x_pos))
 

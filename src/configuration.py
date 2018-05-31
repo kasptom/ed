@@ -7,6 +7,12 @@ EPOCH_PATIENCE = 3
 # GOOGLE_NEWS_WORD_LIMIT = 500000
 GOOGLE_NEWS_WORD_LIMIT = None
 
+DATA_SET_TENDERS = {
+    "label": "tenders",
+    "tracker_dir": "data/tenders/tracker",
+    "bzp_data_dir": "data/tenders/bzp"
+}
+
 DATA_SET_IMDB = {
     "label": "imdb",
     "positive": "data/imdb.pos",

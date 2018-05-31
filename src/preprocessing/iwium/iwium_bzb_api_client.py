@@ -40,12 +40,13 @@ data = {
 }
 
 
-def fetch_and_save_tender_json(tender_number: str, json_save_dir: str):
-    id_number_suffix = tender_number[tender_number.rindex('-') + 1:].strip()
-
-    biuletyn_id = id_number_suffix + "-N-" + tender_number[4:8]
-
-    data['_numer_ogloszenia'] = biuletyn_id
+def fetch_and_save_tender_json(valid_bulletin_number: str, json_save_dir: str):
+    """
+    :param valid_bulletin_number: <int>-N-<year>
+    :param json_save_dir:
+    :return:
+    """
+    data['_numer_ogloszenia'] = valid_bulletin_number
     r = requests.post(url=url, data=data, headers=headers)
     response_xml = r.text
 
@@ -57,10 +58,10 @@ def fetch_and_save_tender_json(tender_number: str, json_save_dir: str):
     if len(tender_list_json['Table']) != 1:
         print('Number of tenders len different than 1')
     elif len(tender_list_json['Table']) > 0:
-        with open(json_save_dir + "/" + tender_number + ".json", 'w+') as json_tender_file:
+        with open(json_save_dir + "/" + valid_bulletin_number + ".json", 'w+') as json_tender_file:
             json.dump(tender_list_json['Table'][0], json_tender_file)
     else:
-        print('no tenders for given id: ' + tender_number)
+        print('no tenders for given id: ' + valid_bulletin_number)
 
 
 def save_jsons(tender_numbers: List[str], sub_dir_name: str):

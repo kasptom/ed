@@ -6,3 +6,4 @@ jupyter
 numpy
 nose
 h5py
+requests

@@ -74,10 +74,10 @@ def save_tender_data_for_found_bulletin_nums(single_day_tenders, bulletin_nums: 
 
 
 def fetch_data_daily(bulletin_nums_of_tenders_to_find, json_save_dir: str):
-    # start_date = date(2017, 1, 1)
-    # end_date = date.today()
-    start_date = date(2017, 6, 26)
-    end_date = date(2017, 6, 26)
+    start_date = date(2017, 1, 1)
+    end_date = date.today()
+    # start_date = date(2017, 6, 26)
+    # end_date = date(2017, 6, 26)
 
     curr_date = start_date
 
@@ -92,7 +92,7 @@ def fetch_data_daily(bulletin_nums_of_tenders_to_find, json_save_dir: str):
     os.makedirs(json_save_dir + '/viewed_json', exist_ok=True)
     os.makedirs(json_save_dir + '/reported_json', exist_ok=True)
 
-    while curr_date <= end_date:
+    while curr_date <= end_date or tenders_left == 0:
         single_day_tenders = fetch_data_for_day(curr_date)
 
         save_tender_data_for_found_bulletin_nums(single_day_tenders, bulletin_nums_of_tenders_to_find['observed'],

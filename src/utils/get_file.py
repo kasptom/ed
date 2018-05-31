@@ -9,5 +9,5 @@ def full_path(relative_file_path: str):
     return ROOT_DIR + relative_file_path
 
 
-def create_file_and_folders_if_not_exist(full_directory_path: str):
-    os.makedirs(os.path.dirname(full_directory_path), exist_ok=True)
+def create_file_and_folders_if_not_exist(full_file_path: str):
+    os.makedirs(os.path.dirname(full_file_path), exist_ok=True)

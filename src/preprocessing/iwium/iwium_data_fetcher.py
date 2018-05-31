@@ -2,8 +2,8 @@ import json
 import os
 
 from src.configuration import DATA_SET_TENDERS
-from src.preprocessing.iwium.iwium_bzb_api_client import fetch_and_save_tender_json
-from src.utils.get_file import full_path, create_file_and_folders_if_not_exist
+from src.preprocessing.iwium.iwium_bzb_api_client import fetch_data_daily
+from src.utils.get_file import full_path
 
 TRACKER_REPORTED_JSON = full_path(DATA_SET_TENDERS['tracker_dir'] + "/reported-offers.json")
 TRACKER_OBSERVED_JSON = full_path(DATA_SET_TENDERS['tracker_dir'] + "/observed-offers.json")
@@ -42,31 +42,25 @@ def parse_tracker_ids(tracker_data_file_path, out_valid_bulletin_numbers_file, o
     return
 
 
-def fetch_bzp_data(ids_file_path, save_dir_name):
-    json_save_dir = full_path('data/' + DATA_SET_TENDERS['label'] + '/' + save_dir_name)
-    os.makedirs(json_save_dir, exist_ok=True)
-
-    with open(ids_file_path, 'r') as ids_file:
-        i = 0
-        for i, l in enumerate(ids_file):
-            pass
-    total_number = i + 1
-
-    with open(ids_file_path, 'r') as ids_file:
-        counter = 0
-        for tender_number in ids_file:
-            fetch_and_save_tender_json(tender_number.strip(), json_save_dir)
-            counter += 1
-            print("progress {0:2.2f}%".format(counter * 100 / total_number))
+def load_bulletin_nums(bulletin_nums_file_path: str):
+    bulletin_nums = []
+    with open(bulletin_nums_file_path, 'r') as bulletin_nums_file:
+        for line in bulletin_nums_file:
+            bulletin_nums.append(line.strip())
+    return bulletin_nums
 
 
 os.makedirs(full_path(DATA_SET_TENDERS['tracker_dir'] + "/ids"), exist_ok=True)
 os.makedirs(full_path(DATA_SET_TENDERS['bzp_data_dir'] + "/bulletin_nums"), exist_ok=True)
 
-parse_tracker_ids(TRACKER_OBSERVED_JSON, OBSERVED_BULLETIN_NUMBERS_PATH, OBSERVED_FILE_PATH_IDS)
-parse_tracker_ids(TRACKER_VIEWED_JSON, VIEWED_BULLETIN_NUMBERS_PATH, VIEWED_FILE_PATH_IDS)
-parse_tracker_ids(TRACKER_REPORTED_JSON, REPORTED_BULLETIN_NUMBERS_PATH, REPORTED_FILE_PATH_IDS)
+# parse_tracker_ids(TRACKER_OBSERVED_JSON, OBSERVED_BULLETIN_NUMBERS_PATH, OBSERVED_FILE_PATH_IDS)
+# parse_tracker_ids(TRACKER_VIEWED_JSON, VIEWED_BULLETIN_NUMBERS_PATH, VIEWED_FILE_PATH_IDS)
+# parse_tracker_ids(TRACKER_REPORTED_JSON, REPORTED_BULLETIN_NUMBERS_PATH, REPORTED_FILE_PATH_IDS)
 
+bulletin_nums_of_tenders_to_find = {
+    'observed': load_bulletin_nums(OBSERVED_BULLETIN_NUMBERS_PATH),
+    'viewed': load_bulletin_nums(VIEWED_BULLETIN_NUMBERS_PATH),
+    'reported': load_bulletin_nums(REPORTED_BULLETIN_NUMBERS_PATH)
+}
 
-# fetch_bzp_data(OBSERVED_FILE_PATH_IDS, 'json_observed')
-# fetch_bzp_data(REPORTED_FILE_PATH_IDS, 'json_reported')
+fetch_data_daily(bulletin_nums_of_tenders_to_find, full_path(DATA_SET_TENDERS['bzp_data_dir'] + "/jsons"))

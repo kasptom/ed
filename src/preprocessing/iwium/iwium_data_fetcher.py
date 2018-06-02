@@ -63,4 +63,39 @@ bulletin_nums_of_tenders_to_find = {
     'reported': load_bulletin_nums(REPORTED_BULLETIN_NUMBERS_PATH)
 }
 
-fetch_data_daily(bulletin_nums_of_tenders_to_find, full_path(DATA_SET_TENDERS['bzp_data_dir'] + "/jsons"))
+
+def remove_existing_tenders_from_fetch_list(bulletin_nums_to_fetch: dict):
+    jsons_dir_path = full_path(DATA_SET_TENDERS['bzp_data_jsons_dir'])
+    for json_dir_name in os.listdir(jsons_dir_path):
+        json_subdir_path = jsons_dir_path + "/" + json_dir_name
+        for json_tender_file_name in os.listdir(json_subdir_path):
+            tender_bulletin_num = json_tender_file_name.replace(".json", "")
+
+            for key in bulletin_nums_to_fetch.keys():
+                if tender_bulletin_num in bulletin_nums_to_fetch[key]:
+                    bulletin_nums_to_fetch[key].remove(tender_bulletin_num)
+    return
+
+
+def tenders_to_fetch_count(bulletin_nums_to_fetch):
+    tenders_left = sum(
+        [len(bulletin_nums_to_fetch[key]) for key in bulletin_nums_to_fetch.keys()]
+    )
+    print('tenders left: {0}'.format(tenders_left))
+    return tenders_left
+
+
+remove_existing_tenders_from_fetch_list(bulletin_nums_of_tenders_to_find)
+
+
+def print_tender_nums_to_fetch(bulletin_nums_to_fetch):
+    for key in bulletin_nums_to_fetch.keys():
+        for bulletin_num in bulletin_nums_to_fetch[key]:
+            print(bulletin_num)
+
+
+tenders_to_fetch_count = tenders_to_fetch_count(bulletin_nums_of_tenders_to_find)
+if tenders_to_fetch_count > 0:
+    print_tender_nums_to_fetch(bulletin_nums_of_tenders_to_find)
+if tenders_to_fetch_count > 5:
+    fetch_data_daily(bulletin_nums_of_tenders_to_find, full_path(DATA_SET_TENDERS['bzp_data_dir'] + "/jsons"))

@@ -45,6 +45,10 @@ def fetch_data_for_day(curr_date):
     data['_data_publikacjiDo'] = str(curr_date)
 
     r = requests.post(url=url, data=data, headers=headers)
+
+    data['_data_publikacjiOd'] = ''
+    data['_data_publikacjiDo'] = ''
+
     response_xml = r.text
 
     tree = eT.fromstring(response_xml)
@@ -57,7 +61,7 @@ def fetch_data_for_day(curr_date):
 
 def save_tender_data_for_found_bulletin_nums(single_day_tenders, bulletin_nums: list, json_save_dir):
     if len(single_day_tenders['Table']) == 0:
-        print("No tenders found")
+        # print("No tenders found")
         return
 
     found_bulletin_nums = []
@@ -75,9 +79,9 @@ def save_tender_data_for_found_bulletin_nums(single_day_tenders, bulletin_nums: 
 
 def fetch_data_daily(bulletin_nums_of_tenders_to_find, json_save_dir: str):
     start_date = date(2017, 1, 1)
-    end_date = date.today()
     # start_date = date(2017, 6, 26)
-    # end_date = date(2017, 6, 26)
+    # end_date = date.today()
+    end_date = date(2017, 12, 31)
 
     curr_date = start_date
 
@@ -92,7 +96,7 @@ def fetch_data_daily(bulletin_nums_of_tenders_to_find, json_save_dir: str):
     os.makedirs(json_save_dir + '/viewed_json', exist_ok=True)
     os.makedirs(json_save_dir + '/reported_json', exist_ok=True)
 
-    while curr_date <= end_date or tenders_left == 0:
+    while curr_date <= end_date and tenders_left > 0:
         single_day_tenders = fetch_data_for_day(curr_date)
 
         save_tender_data_for_found_bulletin_nums(single_day_tenders, bulletin_nums_of_tenders_to_find['observed'],
@@ -105,7 +109,7 @@ def fetch_data_daily(bulletin_nums_of_tenders_to_find, json_save_dir: str):
         tenders_left = len(bulletin_nums_of_tenders_to_find['observed']) + len(
             bulletin_nums_of_tenders_to_find['reported']) + len(bulletin_nums_of_tenders_to_find['viewed'])
 
-        print("{0} [{1:2.2d}]".format(curr_date, counter / total_days))
+        print("{0} [{1:2.2f}]".format(curr_date, counter / total_days))
         print("tenders to find: {0}".format(tenders_left))
 
         curr_date = curr_date + timedelta(days=1)

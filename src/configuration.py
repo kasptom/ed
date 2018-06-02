@@ -10,7 +10,8 @@ GOOGLE_NEWS_WORD_LIMIT = None
 DATA_SET_TENDERS = {
     "label": "tenders",
     "tracker_dir": "data/tenders/tracker",
-    "bzp_data_dir": "data/tenders/bzp"
+    "bzp_data_dir": "data/tenders/bzp",
+    "bzp_data_jsons_dir": "data/tenders/bzp/jsons"
 }
 
 DATA_SET_IMDB = {

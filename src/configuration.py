@@ -7,6 +7,40 @@ EPOCH_PATIENCE = 3
 # GOOGLE_NEWS_WORD_LIMIT = 500000
 GOOGLE_NEWS_WORD_LIMIT = None
 
+DATA_SET_TENDERS_LONG = {
+    "label": "tenders",
+    "positive": "data/tender.pos",
+    "negative": "data/tender.neg",
+    "time_steps": 150,
+    "max_time_steps": 350,
+    "batch_size": 64,
+    "dropout": 0.4,
+    "recurrent_dropout": 0.4,
+    "epochs": 40,
+    "use_google_w2v": False,
+    "tracker_dir": "data/tenders/tracker",
+    "bzp_data_dir": "data/tenders/bzp",
+    "bzp_data_jsons_dir": "data/tenders/bzp/jsons"
+}
+
+DATA_SET_TENDERS_SHORT = {
+    "label": "tenders",
+    "positive": "data/tender_short.pos",
+    "negative": "data/tender_short.neg",
+    "time_steps": 150,
+    "max_time_steps": 350,
+    "batch_size": 64,
+    "dropout": 0.4,
+    "recurrent_dropout": 0.4,
+    "epochs": 40,
+    "use_google_w2v": False,
+    "tracker_dir": "data/tenders/tracker",
+    "bzp_data_dir": "data/tenders/bzp",
+    "bzp_data_jsons_dir": "data/tenders/bzp/jsons"
+}
+
+DATA_SET_TENDERS = DATA_SET_TENDERS_SHORT
+
 DATA_SET_IMDB = {
     "label": "imdb",
     "positive": "data/imdb.pos",
@@ -45,7 +79,7 @@ DATA_SET_TREC = {
     "use_google_w2v": True
 }
 
-DATA_SET = DATA_SET_TREC
+DATA_SET = DATA_SET_TENDERS
 TIME_STEPS = DATA_SET["time_steps"]
 BATCH_SIZE = DATA_SET['batch_size']
 DROPOUT = DATA_SET["dropout"]

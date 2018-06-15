@@ -1,6 +1,6 @@
-gensim
-keras
-tensorflow-gpu
+gensim==3.4.0
+keras==2.1.6
+tensorflow-gpu==1.8.0
 matplotlib
 jupyter
 numpy

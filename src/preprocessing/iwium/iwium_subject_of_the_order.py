@@ -49,6 +49,6 @@ if DATA_SET_TENDERS == DATA_SET_TENDERS_SHORT:
     add_lines_to_corpus_short(json_dir_viewed, positive_corpus_path)
     add_lines_to_corpus_short(json_dir_reported, negative_corpus_path)
 elif DATA_SET_TENDERS == DATA_SET_TENDERS_LONG:
-    add_lines_to_corpus(json_dir_viewed, positive_corpus_path)
     add_lines_to_corpus(json_dir_observed, positive_corpus_path)
+    add_lines_to_corpus(json_dir_viewed, positive_corpus_path)
     add_lines_to_corpus(json_dir_reported, negative_corpus_path)

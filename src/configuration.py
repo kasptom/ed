@@ -11,7 +11,7 @@ DATA_SET_TENDERS_LONG = {
     "label": "tenders",
     "positive": "data/tender.pos",
     "negative": "data/tender.neg",
-    "time_steps": 250,
+    "time_steps": 150,
     "max_time_steps": 350,
     "batch_size": 64,
     "dropout": 0.4,

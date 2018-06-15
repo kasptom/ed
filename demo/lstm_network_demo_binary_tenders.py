@@ -14,7 +14,7 @@ sentiment = {0: "negative", 1: "positive"}
 def check_tender_lstm_network():
     w2v_model = Word2Vec.load(full_path('data/word2vecs/tenders_model'))
     model = keras.models.load_model(
-        full_path("lstm-net-backups/tenders_timestep150_drout0.4_rdrout0.4_batch64_1.h5")
+        full_path("lstm-net-backups/tenders_timestep150_drout0.4_rdrout0.4_batch64_short.h5")
     )
 
     with open(full_path(DATA_SET_TENDERS['positive'])) as positive_corpus:

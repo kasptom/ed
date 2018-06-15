@@ -3,7 +3,7 @@ import re
 from unidecode import unidecode
 from os import listdir
 
-from src.configuration import DATA_SET_TENDERS
+from src.configuration import DATA_SET_TENDERS, DATA_SET_TENDERS_SHORT, DATA_SET_TENDERS_LONG
 from src.utils.get_file import full_path
 
 
@@ -11,6 +11,15 @@ def add_lines_to_corpus(json_dir_path, corpus_file_name):
     json_file_names = [f for f in listdir(json_dir_path)]
     for json_file_name in json_file_names:
         add_line_to_corpus(json_dir_path + '/' + json_file_name, corpus_file_name)
+
+
+def add_lines_to_corpus_short(json_dir_path, corpus_file_name):
+    json_file_names = [f for f in listdir(json_dir_path)]
+    counter = 0
+    for json_file_name in json_file_names:
+        counter += 1
+        if counter < 450:
+            add_line_to_corpus(json_dir_path + '/' + json_file_name, corpus_file_name)
 
 
 def add_line_to_corpus(json_file_path, corpus_file_name):
@@ -35,6 +44,11 @@ json_dir_reported = full_path(DATA_SET_TENDERS['bzp_data_jsons_dir'] + '/reporte
 positive_corpus_path = full_path(DATA_SET_TENDERS['positive'])
 negative_corpus_path = full_path(DATA_SET_TENDERS['negative'])
 
-add_lines_to_corpus(json_dir_observed, positive_corpus_path)
-add_lines_to_corpus(json_dir_viewed, positive_corpus_path)
-add_lines_to_corpus(json_dir_reported, negative_corpus_path)
+if DATA_SET_TENDERS == DATA_SET_TENDERS_SHORT:
+    add_lines_to_corpus_short(json_dir_observed, positive_corpus_path)
+    add_lines_to_corpus_short(json_dir_viewed, positive_corpus_path)
+    add_lines_to_corpus_short(json_dir_reported, negative_corpus_path)
+elif DATA_SET_TENDERS == DATA_SET_TENDERS_LONG:
+    add_lines_to_corpus(json_dir_observed, positive_corpus_path)
+    add_lines_to_corpus(json_dir_viewed, positive_corpus_path)
+    add_lines_to_corpus(json_dir_reported, negative_corpus_path)
